@@ -1,0 +1,223 @@
+<?php
+
+class CoursesController extends BaseController {
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		$cs=Course::with(['instructors', 'hps','room.building','dept','times', 'areas'])->get();
+		return View::make('courses.index')
+			->with("courses",$cs);
+	}
+	
+	public function deptcourses($dept_id)
+	{
+		$cs=Course::with(['instructors', 'hps', 'room.building'])
+			->where('dept_id','=',$dept_id)
+			->where('term_id','=',Session::get('term_id'))->get();
+		return View::make('courses.index')
+			->with("courses", $cs);
+	}
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+        return View::make('courses.create');
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+		//
+	}
+	public function saveone()
+	{
+		// see page 24 of notebook for the thoughts on this
+		
+		// first get the term id
+		$term=Term::where('ay','=',Input::get('ay'))
+		-> where('season','=',Input::get('season'))->first();
+		if ($term==null)
+		{
+			// insert the  new term
+			$term = new Term;
+			$term->ay = Input::get('ay');
+			$term->season = Input::get('season');
+			$term->save();
+		};
+		// now $term->id will be the term id either way
+		
+		// first get the dept id
+		$dept=Dept::where('shortname','=',Input::get('dept'))->first();
+		if ($dept==null)
+		{
+			// insert the  new dept
+			$dept = new Dept;
+			$dept->shortname = Input::get('dept');
+			$dept->save();
+		};
+		// now $dept->id will be the term id either way
+		
+		// first get the building id
+		$building=Building::where('name','=',Input::get('building'))->first();
+		if ($building==null)
+		{
+			// insert the  new term
+			$building = new Building;
+			$building->name = Input::get('building');
+			$building->save();
+		};
+		// now $building->id will be the term id either way
+		
+		// for "times" we need to do it as a loop, I guess
+		
+		foreach (Input::get('times') AS $tinfo)
+		{
+			$time=Time::where('beginning', '=', $tinfo['beginning'])
+			->where('end', '=', $tinfo['end'])
+			->where('day', '=', $tinfo['day'])
+			->first();
+			if ($time==null)
+			{
+				$time=new Time;
+				$time->beginning=$tinfo['beginning'];
+				$time->end=$tinfo['end'];
+				$time->day=$tinfo['day'];
+				$time->save();
+			};
+			$tids[]=$time->id;
+		};
+		// now all ids are in $tids
+		
+		// hps are like times
+		foreach (Input::get('hps') AS $letter)
+		{
+			$hp=Hp::where('letter', '=', $letter)->first();
+			if ($hp==null)
+			{
+				$hp=new Hp;
+				$hp->letter=$letter;
+				$hp->save();
+			};
+			$hpids[]=$hp->id;
+		};
+		// now all ids are in $hpids
+		
+		// now the room, use the building id from above
+		$room=Room::where('building_id', '=', $building->id)
+		->where('number','=',Input::get('roomnumber'))->first();
+		if ($room==null)
+		{
+			$room=new Room;
+			$room->building_id=$building->id;
+			$room->number=Input::get('roomnumber');
+			$room->save();
+		}
+		// now room_id is just $room->id
+		
+		// now instructors. be careful because there's a
+		// many-to-many between instructors and departments
+		// I guess we're just doing the name existence here
+		// but I think that the connection, if it doesn't exist,
+		// between dept and instructor, should be set.
+		foreach (Input::get('instructors') AS $name)
+		{
+			$instructor=Instructor::where('name', '=', $name)->first();
+			if ($instructor==null)
+			{
+				$instructor=new Instructor;
+				$instructor->name=$name;
+				$instructor->save();
+			};
+			$instructorids[]=$instructor->id;
+		};
+		// now all ids are in $instructorids
+		
+		// now check if crn exists to determine if this is 
+		// update or create
+		
+		$course=Course::where('crn', '=', Input::get('crn'))->first();
+		if ($course == null)
+		{
+			$course=new Course;
+		};
+		// now set everything and then use push, I guess
+		$course->crn=Input::get('crn');
+		$course->term_id=$term->id;
+		$course->dept_id=$dept->id;
+		$course->number=Input::get('number');
+		$course->section=Input::get('section');
+		$course->room_id=$room->id;
+		$course->save();
+		// now we do the related models
+		$course->instructors()->sync($instructorids);
+		$course->times()->sync($tids);
+		$course->hps()->sync($hpids);
+		// that should do it!
+		$course->save();
+	}
+			
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		$course=Course::findOrFail($id);
+		if ($id)
+		{
+			return View::make('courses.show')
+			->with("course",$course);
+		};
+		return "doesn't exist";
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+        return View::make('courses.edit');
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		//
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		//
+	}
+
+}
