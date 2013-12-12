@@ -1,0 +1,5 @@
+<ol>
+@foreach ($terms AS $term)
+<li>{{HTML::linkAction('TermsController@show', "$term->season $term->ay", array($term->id))}}</li>
+@endforeach
+</ol>

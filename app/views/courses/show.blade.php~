@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>{{$course->dept->shortname}} {{$course->number}}</title>
+</head>
+<body>
+<table border='1'>
+
+<tr><td>Department</td><td>{{$course->dept->shortname}}</td></tr>
+<tr><td>number</td><td>{{$course->number}}</td></tr>
+<tr><td>Section</td><td>{{$course->section}}</td></tr>
+<tr><td>title</td><td>{{$course->title}}</td></tr>
+<tr><td>Description</td><td>{{$course->description}}</td></tr>
+<tr><td>location</td><td>
+<a href="{{URL::action('RoomsController@show',$course->room->id)}}">
+{{$course->room->building->name}} {{$course->room->number}}
+</a>
+<tr><td>times</td><td>
+@foreach ($course->times AS $time)
+{{$time->day}}: {{$time->beginning}}-{{$time->end}}<br/>
+@endforeach
+</td></tr>
+<tr><td>Hamline Plan</td><td>
+@foreach ($course->hps AS $hp)
+{{$hp->letter}},
+@endforeach
+</td></tr>
+</table>
+
+</body>
+</html>

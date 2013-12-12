@@ -1,0 +1,3 @@
+@foreach ($depts AS $dept)
+{{$dept->shortname}} 
+@endforeach
