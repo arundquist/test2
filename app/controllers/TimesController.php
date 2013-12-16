@@ -89,7 +89,7 @@ class TimesController extends BaseController {
 		//
 	}
 	
-	public function makecalendar($type, $id)
+	public function makecalendar($type, $id, $term_id)
 	{
 		switch ($type)
 		{
@@ -113,7 +113,7 @@ class TimesController extends BaseController {
 			break;
 		default: return "oops";
 		};
-		$cs=$s->courses()->where("term_id",'=',Session::get('term_id'))->get();
+		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
 		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
 		return View::make('times.googlecalendar')
 			->with('courses',$cs);

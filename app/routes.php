@@ -135,7 +135,7 @@ Route::get('timetest', function()
 		echo $dt2->next(Carbon\Carbon::WEDNESDAY); 
 		Return $dt;
 	});
-Route::get('googlecalendar/{type}/{id}', 'TimesController@makecalendar');
+Route::get('googlecalendar/{type}/{id}/{term_id}', 'TimesController@makecalendar');
 Route::get('testspeedfull', 'DataController@checkspeed');
 Route::get('settermandredirect/{id}', 'TermsController@sendback');
 Route::get('testgoogleplot/{dept}/{num}', array('as' => 'enrollment', function($dept,$num)
