@@ -1,3 +1,7 @@
 @foreach ($depts AS $dept)
-{{$dept->shortname}} 
+{{HTML::linkAction('CoursesController@deptcourses', "$dept->shortname ({$dept->courses->count()})", array($dept->id))}} 
+
+<br/>
 @endforeach
+
+

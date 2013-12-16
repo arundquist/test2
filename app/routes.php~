@@ -16,7 +16,7 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::when('Courses/*', 'term');
+Route::when('Courses/*', 'termwithredirect');
 
 Route::get('/hithere/{name?}', function($name=NULL)
 	{
@@ -123,7 +123,12 @@ Route::get('instructorhistory/{name}', function($name)
 			->with('courses',$courses);  
 	});
 
+Route::get('unsetterm', function()
+	{
+		Session::forget('term_id');
+	});
 Route::get('testspeedfull', 'DataController@checkspeed');
+Route::get('settermandredirect/{id}', 'TermsController@sendback');
 Route::get('testgoogleplot/{dept}/{num}', array('as' => 'enrollment', function($dept,$num)
 	{
 		$department=Dept::where('shortname',$dept)->first();

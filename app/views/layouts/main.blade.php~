@@ -19,6 +19,9 @@
 					<p>{{ Session::get('message') }}</p>
 				</div>
 			@endif
+			@foreach ($hps AS $hp)
+			{{$hp->letter}}
+			@endforeach
 			<div class="row">
 			<div class="col-md-1">
 			@foreach ($depts AS $dept)

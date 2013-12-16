@@ -42,7 +42,7 @@ class TimesController extends BaseController {
 	{
 		$time=Time::findOrFail($id);
 		$cs=$time->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times');
+		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

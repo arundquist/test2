@@ -2,7 +2,8 @@
 @section('main')
 <h1>{{$courses[0]->term->ay}}: {{$courses[0]->term->season}}</h1>
 <p>
-{{HTML::linkAction('TermsController@index', "choose different term")}}
+{{HTML::linkAction('TermsController@index', "choose different term")}} 
+{{HTML::linkAction('TimesController@makecalendar', "google calendar", array(Request::segment(1), Request::segment(2)))}}
 </p>
 <table class="table-striped table-bordered">
 <thead>

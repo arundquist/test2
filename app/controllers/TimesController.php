@@ -88,5 +88,35 @@ class TimesController extends BaseController {
 	{
 		//
 	}
+	
+	public function makecalendar($type, $id)
+	{
+		switch ($type)
+		{
+		case "depts":
+			$s=Dept::findOrFail($id);
+			break;
+		case "hps":
+			$s=Hp::findOrFail($id);
+			break;
+		case "times":
+			$s=Time::findOrFail($id);
+			break;
+		case "rooms":
+			$s=Room::findOrFail($id);
+			break;
+		case "areas":
+			$s=Area::findOrFail($id);
+			break;
+		case "instructors":
+			$s=Instructor::findOrFail($id);
+			break;
+		default: return "oops";
+		};
+		$cs=$s->courses()->where("term_id",'=',Session::get('term_id'))->get();
+		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
+		return View::make('times.googlecalendar')
+			->with('courses',$cs);
+	}
 
 }

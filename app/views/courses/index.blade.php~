@@ -1,8 +1,11 @@
+@extends('layouts.main')
+@section('main')
 <h1>{{$courses[0]->term->ay}}: {{$courses[0]->term->season}}</h1>
 <p>
 {{HTML::linkAction('TermsController@index', "choose different term")}}
 </p>
-<table border='1'>
+<table class="table-striped table-bordered">
+<thead>
 <tr>
 <th>crn</th>
 <th>Dept</th>
@@ -18,6 +21,7 @@
 <th>when</th>
 <th>Prereqs</th>
 </tr>
+</thead>
 @foreach($courses AS $course)
 <tr>
 <td>{{$course->crn}}</td>
@@ -26,7 +30,7 @@
 <td>{{$course->section}}</td>
 <td>{{$course->title}}</td>
 <td>{{$course->credits}}</td>
-<td>{{$course->enrollment}} of {{$course->enrollmentmax}}</td>
+<td>{{HTML::linkRoute('enrollment', "{$course->enrollment} of {$course->enrollmentmax}", array($course->dept->shortname,$course->number))}}</td>
 <td>
 @foreach($course->hps AS $hp)
 {{HTML::linkAction('HpsController@show',"{$hp->letter}", $hp->id)}},
@@ -49,8 +53,11 @@
 
 <td>
 @foreach($course->times AS $time)
-{{HTML::linkAction('TimesController@show',"{$time->day}: {$time->beginning}-{$time->end}", $time->id)}}<br/>
+{{$time->singleletter}}
 @endforeach
+@if ($course->times->count() >0)
+: {{HTML::linkAction('TimesController@show', "{$course->times[0]->beginning}-{$course->times[0]->end}", $course->times[0]->id)}}
+@endif
 </td>
 
 <td>
@@ -60,6 +67,7 @@
 @endforeach
 </tr>
 </table>
+@stop
 
 
 

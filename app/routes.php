@@ -127,6 +127,15 @@ Route::get('unsetterm', function()
 	{
 		Session::forget('term_id');
 	});
+Route::get('timetest', function()
+	{
+		$dt=Carbon\Carbon::createFromFormat('j-M-Y h:ia', '16-Feb-2009 1:01pm');
+		$dt->next(\Carbon\Carbon::WEDNESDAY);
+		$dt2 = Carbon\Carbon::create(2012, 1, 31, 11, 5, 0);
+		echo $dt2->next(Carbon\Carbon::WEDNESDAY); 
+		Return $dt;
+	});
+Route::get('googlecalendar/{type}/{id}', 'TimesController@makecalendar');
 Route::get('testspeedfull', 'DataController@checkspeed');
 Route::get('settermandredirect/{id}', 'TermsController@sendback');
 Route::get('testgoogleplot/{dept}/{num}', array('as' => 'enrollment', function($dept,$num)
