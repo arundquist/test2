@@ -115,8 +115,11 @@ class TimesController extends BaseController {
 		};
 		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
 		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
-		return View::make('times.googlecalendar')
+		$v=View::make('times.googlecalendar')
 			->with('courses',$cs);
+		return Response::make($v,"200")
+			->header('Content-Type', 'text/calendar')
+			->header('Content-Disposition', 'attachment; filename="test.ics"');
 	}
 
 }
