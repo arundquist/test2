@@ -9,10 +9,15 @@ $newdt2=Carbon\Carbon::createFromFormat('Y-m-j h:ia', "{$dt->toDateString()} {$t
 ?>
 BEGIN:VEVENT
 DTSTART:{{$newdt->format('Ymd\THis') }}
+
 DTEND:{{$newdt2->format('Ymd\THis') }}
+
 DESCRIPTION:
+
 LOCATION:{{$course->room->building->name}} {{$course->room->number}}
+
 SUMMARY:{{$course->title}}
+
 END:VEVENT
 
 
