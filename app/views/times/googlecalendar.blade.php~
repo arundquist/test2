@@ -1,16 +1,24 @@
 BEGIN:VCALENDAR
-@foreach ($courses AS $course)
 
+X-WR-CALNAME:{{$title}}
+
+@foreach ($courses AS $course)
+<?php $days=array();?>
 @foreach($course->times AS $time)
-<?php $var=strtoupper($time->day);
-eval("\$dt= Carbon\Carbon::now()->next(Carbon\Carbon::$var);");
-$newdt=Carbon\Carbon::createFromFormat('Y-m-j h:ia', "{$dt->toDateString()} {$time->beginning}");
-$newdt2=Carbon\Carbon::createFromFormat('Y-m-j h:ia', "{$dt->toDateString()} {$time->end}");
+<?php 
+$days[]=substr(strtoupper($time->day),0,2);?>
+@endforeach
+<?php
+$startdate=Carbon\Carbon::createFromFormat('Ymj h:ia', "{$term->startdate} {$course->times[0]->beginning}");
+$enddate=Carbon\Carbon::createFromFormat('Ymj h:ia', "{$term->startdate} {$course->times[0]->end}");
+$endrepeatdate=Carbon\Carbon::createFromFormat('Ymj', "{$term->enddate}");
 ?>
 BEGIN:VEVENT
-DTSTART:{{$newdt->format('Ymd\THis') }}
+DTSTART;TZID=America/Chicago:{{$startdate->format('Ymd\THis') }}
 
-DTEND:{{$newdt2->format('Ymd\THis') }}
+DTEND;TZID=America/Chicago:{{$enddate->format('Ymd\THis') }}
+
+RRULE:FREQ=WEEKLY;UNTIL={{$endrepeatdate->format('Ymd\THis')}}Z;BYDAY={{implode(",",$days)}}
 
 DESCRIPTION:
 
@@ -20,7 +28,5 @@ SUMMARY:{{$course->title}}
 
 END:VEVENT
 
-
-@endforeach
 @endforeach
 END:VCALENDAR
