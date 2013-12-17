@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 
-X-WR-CALNAME:test repeat
+X-WR-CALNAME:{{$title}}
 
 @foreach ($courses AS $course)
 <?php $days=array();?>
