@@ -3,7 +3,7 @@ BEGIN:VCALENDAR
 X-WR-CALNAME:test repeat
 
 @foreach ($courses AS $course)
-
+<?php $days=array();?>
 @foreach($course->times AS $time)
 <?php 
 $days[]=substr(strtoupper($time->day),0,2);?>
