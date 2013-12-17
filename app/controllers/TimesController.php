@@ -113,10 +113,12 @@ class TimesController extends BaseController {
 			break;
 		default: return "oops";
 		};
+		$term=Term::findOrFail($term_id);
 		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
 		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
 		$v=View::make('times.googlecalendar')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('term', $term);
 		return Response::make($v,"200")
 			->header('Content-Type', 'text/calendar')
 			->header('Content-Disposition', 'attachment; filename="test.ics"');
