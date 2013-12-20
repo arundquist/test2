@@ -335,6 +335,7 @@ function prof($inst) {
 	public function grabenrollments()
 	{
 		$courses=Course::where('enrollmentchecked','0')->get();
+		echo $courses->count();
 		ini_set('max_execution_time', 300);
 		$i=0;
 		foreach ($courses AS $course)
