@@ -19,10 +19,7 @@
 					<p>{{ Session::get('message') }}</p>
 				</div>
 			@endif
-			@foreach ($hps AS $hp)
-			{{$hp->letter}}
-			@endforeach
-			{{Request::segment(1)}}/{{Request::segment(2)}}
+			
 			<div class="row">
 			<div class="col-md-1">
 			@foreach ($depts AS $dept)
