@@ -492,6 +492,34 @@ function prof($inst) {
 		};
 	}
 	
+	public function grabterm($year, $season)
+	{
+		$sarray=["fall"=>"11",
+			"winter"=>"12",
+			"spring"=>"13",
+			"summer"=>"15"];
+		$season=$sarray[$season];
+		$urlyear=$year;
+		If ($season!=11){
+			$urlyear=$year-1;
+			};
+		$fixedstring=$urlyear.$season;
+		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
+		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
+		// this will grab each course section
+		$f=preg_match_all("/(<TR><TD><a href.*?<HR)/sm",$all,$matches);
+		foreach ($matches[1] AS $m)
+		{
+			$biglist[]=$this->getalldetails($m);
+		};
+		//Return View::make('showall',array("biglist"=>$biglist));
+		ini_set('max_execution_time', 120);
+		foreach ($biglist AS $single)
+		{
+			$this->saveone($year,$season, $single);
+		};
+	}
+	
 	// function to take single class data and put in database
 	
 	public function saveone($year,$season,$list)

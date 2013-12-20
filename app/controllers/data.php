@@ -414,6 +414,7 @@ function prof($inst) {
 		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
 		// if the 5th one is "corequisites:" then you have to add
 		// 2 to all the indices after that
+		
 		$add=0;
 		if ($matches2[1][5]=="Corequisites:") 
 		{
@@ -423,7 +424,7 @@ function prof($inst) {
 		$h=preg_match("/<a.*?>(.*?)</",$matches2[1][0],$crnmatch);
 		$result["crn"]=$crnmatch[1];
 		//grab dept and course and section number
-		$h=preg_match("/([A-Z]{3,4}) ([0-9]{4})-(.*)/",$matches2[1][1],$deptmatch);
+		$h=preg_match("/([A-Z&]{3,4}) ([0-9L]{4,5})-(.*)/",$matches2[1][1],$deptmatch);
 		$result["dept"]=$deptmatch[1];
 		$result["num"]=$deptmatch[2];
 		$result["sec"]=$deptmatch[3];
@@ -474,6 +475,30 @@ function prof($inst) {
 		return $result;
 	}
 	
+	public function getalldetailstest($string)
+	{
+		$result=array(
+			"crn"=>"",
+			"dept"=>"",
+			"num"=>"",
+			"sec"=>"",
+			"instructors"=>array(),
+			"title"=>"",
+			"credits"=>"",
+			"description"=>"",
+			"hps"=>array(),
+			"days"=>array(),
+			"starttime"=>"",
+			"endtime"=>"",
+			"building"=>"",
+			"room"=>"");
+		// this will grab all the various tds
+		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
+		// if the 5th one is "corequisites:" then you have to add
+		// 2 to all the indices after that
+		return var_dump($matches2[1][1]);
+	}
+	
 	public function grabfromlist()
 	{
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=201313&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
@@ -483,6 +508,7 @@ function prof($inst) {
 		foreach ($matches[1] AS $m)
 		{
 			$biglist[]=$this->getalldetails($m);
+			
 		};
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 60);
@@ -507,17 +533,19 @@ function prof($inst) {
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
 		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
 		// this will grab each course section
-		$f=preg_match_all("/(<TR><TD><a href.*?<HR)/sm",$all,$matches);
+		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
 		foreach ($matches[1] AS $m)
 		{
+			
 			$biglist[]=$this->getalldetails($m);
+			
 		};
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 120);
 		foreach ($biglist AS $single)
 		{
 			$this->saveone($year,$season, $single);
-		};
+		}; 
 	}
 	
 	// function to take single class data and put in database
