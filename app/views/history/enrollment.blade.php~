@@ -6,9 +6,9 @@
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-        	['Year', 'Enrollment', 'Max'],
+        	['Year', 'Enrollment', 'Cap'],
         @foreach ($courses AS $course)
-        ['{{$course->ay}}', {{$course->enrollment}}, {{$course->enrollmentmax}}],
+        ['{{$course->term->ay}} {{$course->term->season}}-{{$course->section}}', {{$course->enrollment}}, {{$course->enrollmentmax}}],
         @endforeach
         ]);
 
@@ -22,6 +22,10 @@
     </script>
   </head>
   <body>
+  <h1>{{$courses[0]->title}}</h1>
     <div id="chart_div" style="width: 900px; height: 500px;"></div>
+    
+    
+    {{$courses[0]->description}}
   </body>
 </html>
