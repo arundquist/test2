@@ -7,6 +7,6 @@ class Building extends Eloquent {
 	
 	public function rooms()
 	{
-		return $this->belongsToMany('Room');
+		return $this->hasMany('Room');
 	}
 }

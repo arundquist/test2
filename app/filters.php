@@ -40,8 +40,10 @@ View::composer('layouts.main', function($view)
 	{
 		$depts=Dept::orderBy('shortname','ASC')->get();
 		$hps=Hp::orderBy('letter', 'ASC')->get();
-		$view->with("depts",$depts)
-			->with("hps", $hps);
+		$areas=Area::orderBy('area', 'ASC')->get();
+		$instructors=Instructor::orderBy('name', 'ASC')->get();
+		$buildings=Building::orderBy('name','ASC')->get();
+		$view->with("hps", $hps);
 	});
 
 

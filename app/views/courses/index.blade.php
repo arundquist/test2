@@ -1,13 +1,15 @@
 @extends('layouts.main')
+
+@section('navcomplete')
+<li>{{HTML::linkAction('TermsController@index', "choose different term")}}</li>
+<li>{{HTML::linkAction('TimesController@makecalendar', "google calendar", array(Request::segment(1), Request::segment(2),Session::get('term_id')))}}</li>
+@stop
+
 @section('main')
-<h1>{{$courses[0]->term->ay}}: {{$courses[0]->term->season}}</h1>
-<p>
-{{HTML::linkAction('TermsController@index', "choose different term")}} 
-{{HTML::linkAction('TimesController@makecalendar', "google calendar", array(Request::segment(1), Request::segment(2),Session::get('term_id')))}}
-</p>
 <table class="table-striped table-bordered">
 <thead>
 <tr>
+<th>term</th>
 <th>crn</th>
 <th>Dept</th>
 <th>Number</th>
@@ -25,6 +27,7 @@
 </thead>
 @foreach($courses AS $course)
 <tr>
+<td>{{$course->term->season}} {{$course->term->ay}}</td>
 <td>{{$course->crn}}</td>
 <td>{{HTML::linkAction('DeptsController@show', "{$course->dept->shortname}", $course->dept->id)}}</td>
 <td>{{$course->number}}</td>

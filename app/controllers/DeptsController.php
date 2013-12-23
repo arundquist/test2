@@ -9,7 +9,9 @@ class DeptsController extends BaseController {
 	 */
 	public function index()
 	{
-        return View::make('depts.index');
+		$depts=Dept::orderBy('shortname', 'ASC')->get();
+		return View::make('depts.index')
+			->with('depts', $depts);
 	}
 
 	/**
@@ -42,7 +44,7 @@ class DeptsController extends BaseController {
 	{
 		$dept=Dept::findOrFail($id);
 		$cs=$dept->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
+		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

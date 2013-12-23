@@ -39,7 +39,9 @@ Route::filter('termwithredirect', function()
 View::composer('layouts.main', function($view)
 	{
 		$depts=Dept::orderBy('shortname','ASC')->get();
-		$view->with("depts",$depts);
+		$hps=Hp::orderBy('letter', 'ASC')->get();
+		$view->with("depts",$depts)
+			->with("hps", $hps);
 	});
 
 

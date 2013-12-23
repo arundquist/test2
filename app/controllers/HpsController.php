@@ -43,7 +43,7 @@ class HpsController extends BaseController {
 	{
 		$hp=Hp::findOrFail($id);
 		$cs=$hp->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
+		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

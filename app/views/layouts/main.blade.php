@@ -19,18 +19,42 @@
 					<p>{{ Session::get('message') }}</p>
 				</div>
 			@endif
+			<!-- Static navbar -->
+      <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SS LF BD dB</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active">{{HTML::linkAction('DeptsController@index', "Departments")}}</li>
+            <li>{{HTML::linkAction('InstructorsController@index', "Instructors")}}</li>
+            <li>{{HTML::linkAction('BuildingsController@index', "Buildings")}}</li>
+            <li>{{HTML::linkAction('TimesController@index', "Times")}}</li>
+            <li>{{HTML::linkAction('AreasController@index', "Areas of Study")}}</li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">HP's <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              @foreach ($hps AS $hp)
+                <li>{{HTML::linkAction('HpsController@show',"{$hp->letter}", $hp->id)}}</li>
+              @endforeach
+              </ul>
+            </li>
+          </ul>
+           <ul class="nav navbar-nav navbar-right">
+           @yield('navcomplete')
+          </ul>
+         
+        </div><!--/.nav-collapse -->
+      </div>
 			
-			<div class="row">
-			<div class="col-md-1">
-			@foreach ($depts AS $dept)
-			{{HTML::linkAction('DeptsController@show', "{$dept->shortname}", $dept->id)}}<br/>
-			@endforeach
-			</div>
-			
-			<div class="col-md-11">
 			@yield('main')
-			</div>
-		</div>
+			
 		</div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>

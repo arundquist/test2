@@ -9,7 +9,10 @@ class BuildingsController extends BaseController {
 	 */
 	public function index()
 	{
-        return View::make('buildings.index');
+		$buildings=Building::orderBy('name', 'ASC')->get();
+		$buildings->load('rooms');
+		return View::make('buildings.index')
+			->with("buildings", $buildings);
 	}
 
 	/**

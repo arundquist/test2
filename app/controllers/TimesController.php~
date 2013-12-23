@@ -91,32 +91,43 @@ class TimesController extends BaseController {
 	
 	public function makecalendar($type, $id, $term_id)
 	{
+		$term=Term::findOrFail($term_id);
+		$title="none";
 		switch ($type)
 		{
 		case "depts":
 			$s=Dept::findOrFail($id);
+			$title="{$s->shortname} {$term->ay} {$term->season}";
 			break;
 		case "hps":
 			$s=Hp::findOrFail($id);
+			$title="HP {$s->letter} {$term->ay} {$term->season}";
 			break;
 		case "times":
 			$s=Time::findOrFail($id);
+			$title="{$t->beginning} {$term->ay} {$term->season}";
 			break;
 		case "rooms":
 			$s=Room::findOrFail($id);
+			$title="{$s->building->name} {$s->number} {$term->ay} {$term->season}";
 			break;
 		case "areas":
 			$s=Area::findOrFail($id);
+			$title="Area {$s->area} {$term->ay} {$term->season}";
 			break;
 		case "instructors":
 			$s=Instructor::findOrFail($id);
+			$title="{$s->name} {$term->ay} {$term->season}";
 			break;
 		default: return "oops";
 		};
+		
 		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
 		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
 		$v=View::make('times.googlecalendar')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('term', $term)
+			->with('title', $title);
 		return Response::make($v,"200")
 			->header('Content-Type', 'text/calendar')
 			->header('Content-Disposition', 'attachment; filename="test.ics"');
