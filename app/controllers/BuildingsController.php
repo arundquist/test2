@@ -9,8 +9,10 @@ class BuildingsController extends BaseController {
 	 */
 	public function index()
 	{
-		$buildings=Building::orderBy('name', 'ASC')->get();
-		$buildings->load('rooms');
+		$buildings=Building::with(array('rooms'=>function($query)
+			{
+				$query->orderBy('number','ASC');
+			}))->orderBy('name', 'ASC')->get();
 		return View::make('buildings.index')
 			->with("buildings", $buildings);
 	}
