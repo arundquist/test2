@@ -9,7 +9,7 @@
 			.error { color: red; font-style: italic; }
 			body { padding-top: 20px; }
 		</style>
-		<link rel="shortcut icon" href="{{URL::to('favicon.ico?v=2')}}" />
+		<link rel="shortcut icon" href="{{URL::to('favicon.ico?v=3')}}" />
 		<title>Hamline Course Schedule</title>
 	</head>
 
