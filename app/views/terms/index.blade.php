@@ -1,5 +1,8 @@
-<ol>
+@extends('layouts.main')
+@section('main')
+<div class="list-group">
 @foreach ($terms AS $term)
-<li>{{HTML::linkAction('TermsController@sendback', "$term->season $term->ay", array($term->id))}}</li>
+{{link_to_action('TermsController@sendback', "$term->ay $term->season", array($term->id),['class'=>'list-group-item'])}}
 @endforeach
-</ol>
+</div>
+@stop
