@@ -11,7 +11,10 @@
 |
 */
 
-Route::get('/', 'TermsController@index');
+Route::get('/', function()
+	{
+		return View::make('splash');
+	});
 
 Route::when('Courses/*', 'termwithredirect');
 

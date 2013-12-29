@@ -9,6 +9,7 @@
 			.error { color: red; font-style: italic; }
 			body { padding-top: 20px; }
 		</style>
+		<title>Hamline Course Schedule</title>
 	</head>
 
 	<body>
@@ -28,11 +29,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">SS LF BD dB</a>
+          <a class="navbar-brand" href="{{URL::to('/')}}">SS LF BD dB</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active">{{HTML::linkAction('DeptsController@index', "Departments")}}</li>
+            <li>{{HTML::linkAction('DeptsController@index', "Departments")}}</li>
             <li>{{HTML::linkAction('InstructorsController@index', "Instructors")}}</li>
             <li>{{HTML::linkAction('BuildingsController@index', "Buildings")}}</li>
             <li>{{HTML::linkAction('TimesController@index', "Times")}}</li>
