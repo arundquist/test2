@@ -694,4 +694,13 @@ function prof($inst) {
 		// that should do it!
 		$course->save();
 	}
+	
+	public function crndetails($crn)
+	{
+		$course=Course::with(array('term', 'areas'))
+			->where('crn',$crn)->first();
+		echo "<pre>";
+		echo var_dump($course);
+		echo "</pre>";
+	}
 }

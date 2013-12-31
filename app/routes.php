@@ -27,6 +27,8 @@ Route::get('/hithere/{name?}', function($name=NULL)
 	}
 	);
 
+Route::get('crndetails/{crn}','DataController@crndetails');
+
 Route::get('originalschedule', function()
 	{
 		return View::make('originalform');
