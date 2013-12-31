@@ -334,6 +334,7 @@ function prof($inst) {
 	
 	public function grabenrollments()
 	{
+		DB::connection()->disableQueryLog();
 		$courses=Course::where('enrollmentchecked','0')->get();
 		echo $courses->count();
 		ini_set('max_execution_time', 300);
