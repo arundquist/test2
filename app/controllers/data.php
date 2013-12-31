@@ -703,4 +703,13 @@ function prof($inst) {
 		echo var_dump($course);
 		echo "</pre>";
 	}
+	
+	public function clearenrollment($term_id)
+	{
+		$success=DB::table('courses')
+			->where('term_id', $term_id)
+			->update(array('enrollmentchecked' => 0));
+		 $queries = DB::getQueryLog();
+		 RETURN var_dump($queries);
+	}
 }

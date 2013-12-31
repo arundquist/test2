@@ -28,6 +28,7 @@ Route::get('/hithere/{name?}', function($name=NULL)
 	);
 
 Route::get('crndetails/{crn}','DataController@crndetails');
+Route::get('clearenrollments/{term_id}', 'DataController@clearenrollment');
 
 Route::get('originalschedule', function()
 	{
