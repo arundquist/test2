@@ -1,5 +1,5 @@
-<html>
-  <head>
+@extends('layouts.main')
+@section('main')
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
@@ -20,12 +20,10 @@
         chart.draw(data, options);
       }
     </script>
-  </head>
-  <body>
+ 
   <h1>{{$courses[0]->title}}</h1>
     <div id="chart_div" style="width: 900px; height: 500px;"></div>
     
     
     {{$courses[0]->description}}
-  </body>
-</html>
+@stop

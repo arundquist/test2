@@ -13,7 +13,7 @@
         ]);
 
         var options = {
-        	title: '{{$dept->shortname}} {{$courses[1]->number}} enrollment'
+        	title: '{{$dept->shortname}} {{$courses[0]->number}} enrollment'
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
