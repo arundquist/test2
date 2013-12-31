@@ -17,6 +17,14 @@ Route::get('/', function()
 	});
 
 Route::when('Courses/*', 'termwithredirect');
+Route::when('depts/*', 'termwithredirect');
+Route::when('hps/*', 'termwithredirect');
+Route::when('areas/*', 'termwithredirect');
+Route::when('instructors/*', 'termwithredirect');
+Route::when('rooms/*', 'termwithredirect');
+Route::when('buildings/*', 'termwithredirect');
+Route::when('times/*', 'termwithredirect');
+
 
 Route::get('/hithere/{name?}', function($name=NULL)
 	{
