@@ -334,6 +334,7 @@ function prof($inst) {
 	
 	public function grabenrollments()
 	{
+		DB::connection()->disableQueryLog();
 		$courses=Course::where('enrollmentchecked','0')->get();
 		echo $courses->count();
 		ini_set('max_execution_time', 300);
@@ -693,5 +694,23 @@ function prof($inst) {
 		$course->hps()->sync($hpids);
 		// that should do it!
 		$course->save();
+	}
+	
+	public function crndetails($crn)
+	{
+		$course=Course::with(array('term', 'areas'))
+			->where('crn',$crn)->first();
+		echo "<pre>";
+		echo var_dump($course);
+		echo "</pre>";
+	}
+	
+	public function clearenrollment($term_id)
+	{
+		$success=DB::table('courses')
+			->where('term_id', $term_id)
+			->update(array('enrollmentchecked' => 0));
+		 $queries = DB::getQueryLog();
+		 RETURN var_dump($queries);
 	}
 }
