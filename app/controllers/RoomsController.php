@@ -40,9 +40,7 @@ class RoomsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$room=Room::findOrFail($id);
-		$cs=$room->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$cs=Helper::courselist("Room",$id);
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

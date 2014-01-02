@@ -6,4 +6,14 @@ class Helper {
     {
         return 'Hello World';
     }
+    
+    public static function courselist($model, $id)
+    {
+    	    $mod=$model::findOrFail($id);
+    	    $cs=$mod->courses()->where("term_id",'=',\Session::get('term_id'))
+    	    	->where("cancelled",0)->get();
+    	    $cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+    	    return $cs;
+    }
+		
 }

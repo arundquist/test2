@@ -4,7 +4,7 @@ class google
 {
 	public static function termstart($term_id)
 	{
-		$term=\Term::findOrFail($term_id);
+		$term=Term::findOrFail($term_id);
 		$months=["fall"=>"0901",
 			"winter"=>"0101",
 			"spring"=>"0201"];

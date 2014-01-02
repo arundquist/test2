@@ -9,7 +9,9 @@ class TimesController extends BaseController {
 	 */
 	public function index()
 	{
-        return View::make('times.index');
+		$times=Time::orderBy('day', 'ASC')->get();
+		return View::make('times.index')
+			->with('times', $times);
 	}
 
 	/**
@@ -123,7 +125,7 @@ class TimesController extends BaseController {
 		};
 		
 		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
+		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
 		$v=View::make('times.googlecalendar')
 			->with('courses',$cs)
 			->with('term', $term)

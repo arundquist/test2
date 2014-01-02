@@ -42,9 +42,7 @@ class InstructorsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$instructor=Instructor::findOrFail($id);
-		$cs=$instructor->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$cs=Helper::courselist("Instructor",$id);
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

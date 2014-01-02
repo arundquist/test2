@@ -42,9 +42,7 @@ class DeptsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$dept=Dept::findOrFail($id);
-		$cs=$dept->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$cs=Helper::courselist("Dept",$id);
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}

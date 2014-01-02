@@ -42,9 +42,7 @@ class AreasController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$area=Area::findOrFail($id);
-		$cs=$area->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$cs=Helper::courselist("Area",$id);
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}
