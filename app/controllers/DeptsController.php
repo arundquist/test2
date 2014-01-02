@@ -42,9 +42,12 @@ class DeptsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$cs=Helper::courselist("Dept",$id);
+		$mod=Dept::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Department: {$mod->shortname}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 
 	/**

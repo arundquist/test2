@@ -42,9 +42,12 @@ class AreasController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$cs=Helper::courselist("Area",$id);
+		$mod=Area::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Area of study: {$mod->area}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 
 	/**

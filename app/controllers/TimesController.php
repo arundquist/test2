@@ -42,12 +42,12 @@ class TimesController extends BaseController {
 	 */
 	public function show($id)
 	{
-		//$time=Time::findOrFail($id);
-		//$cs=$time->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		//$cs->load('instructors', 'hps','room.building','dept','times', 'areas');
-		$cs=Helper::courselist("Time",$id);
+		$mod=Time::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Day and time: {$mod->day} {$mod->beginning}-{$mod->end}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 	
 	// ok, this works

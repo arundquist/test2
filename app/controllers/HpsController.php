@@ -41,9 +41,12 @@ class HpsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$cs=Helper::courselist("Hp",$id);
+		$mod=Hp::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Hamline Plan {$mod->letter}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title', $title);
 	}
 
 	/**

@@ -42,9 +42,12 @@ class InstructorsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$cs=Helper::courselist("Instructor",$id);
+		$mod=Instructor::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Instructor: {$mod->name}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 
 	/**

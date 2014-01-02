@@ -40,9 +40,12 @@ class RoomsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$cs=Helper::courselist("Room",$id);
+		$mod=Room::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Room: {$mod->building->name} {$mod->number}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 
 	/**
