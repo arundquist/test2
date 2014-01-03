@@ -44,7 +44,8 @@ class InstructorsController extends BaseController {
 	{
 		$mod=Instructor::findOrFail($id);
 		$cs=Helper::courselistwithmodel($mod);
-		$title="Instructor: {$mod->name}";
+		$link=HTML::linkAction('InstructorsController@history', "full history", $mod->id);
+		$title="Instructor: {$mod->name} ($link)";
 		return View::make('courses.index')
 			->with('courses',$cs)
 			->with('title',$title);
