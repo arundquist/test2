@@ -87,6 +87,7 @@ class InstructorsController extends BaseController {
 	public function history($id)
 	{
 		$instructor=Instructor::findOrFail($id);
+		$title="{$instructor->name} full history";
 		$courses=$instructor->courses;
 		$courses->load('instructors', 'hps','room.building','dept','times', 'areas', 'term');
 		$roles = $courses->sortBy(function($course)
@@ -103,7 +104,8 @@ class InstructorsController extends BaseController {
 				return $ay;
 			});
 		return View::make('courses.index')
-			->with('courses',$courses);  
+			->with('courses',$courses)
+			->with('title', $title);  
 	}
 
 }
