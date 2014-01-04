@@ -672,7 +672,8 @@ function prof($inst) {
 		// now check if crn exists to determine if this is 
 		// update or create
 		
-		$course=Course::where('crn', '=', $list['crn'])->first();
+		$course=Course::where('crn', '=', $list['crn'])
+			->where('term_id',$term->id)->first();
 		if ($course == null)
 		{
 			$course=new Course;

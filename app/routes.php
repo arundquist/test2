@@ -81,6 +81,7 @@ Route::get('fromlist', 'DataController@grabfromlist');
 Route::get('testsave', 'CoursesController@saveone');
 Route::get('commontime/{term}/{time}', 'TimesController@common');
 Route::get('Courses/DepartmentCourses/{dept_id}', 'CoursesController@deptcourses');
+Route::get('updatebyid/{id}', 'DataController@updatebyid');
 
 Route::get('grabterm/{year}/{season}', 'DataController@grabterm');
 
@@ -115,6 +116,12 @@ Route::get('testcourseview/{model}/{id}', function($model,$id)
 Route::get('testhelper', function()
 	{
 		return Helper::helloWorld();
+	});
+
+Route::get('testdate', function()
+	{
+		$cs=Course::find(10);
+		Return $cs->created_at->diffForHumans();
 	});
 
 // resources
