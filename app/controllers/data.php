@@ -744,6 +744,7 @@ function prof($inst) {
 	public function deptAllforcopying($dept_id)
 	{
 		$mod=Dept::findOrFail($dept_id);
+		$title="History for {$mod->shortname}";
 		$cs=$mod->courses()
     	    		->where("cancelled",0)->get();
     	    	$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
@@ -768,6 +769,11 @@ function prof($inst) {
 			{
 				$hps.=$hp->letter;
 			};
+			$inst=array();
+			foreach ($course->instructors AS $instructor)
+			{
+				$inst[]=$instructor->name;
+			};
 			$all[]=["term"=>"{$course->term->season} {$course->term->ay}",
 				"crn"=>$course->crn,
 				"number"=>$course->number,
@@ -775,10 +781,12 @@ function prof($inst) {
 				"title"=>$course->title,
 				"credits"=>$course->credits,
 				"hp"=>$hps,
+				"instructor"=>implode(", ",$inst),
 				"enrolled"=>$course->enrollment,
 				"max"=>$course->enrollmentmax];
 		};
 		return View::make('courses.showarray')
-			->with('all',$all);
+			->with('all',$all)
+			->with('title',$title);
 	}
 }

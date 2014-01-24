@@ -5,7 +5,9 @@
 @stop
 
 @section('main')
-
+@if (isset($title))
+<h2>{{$title}}</h2>
+@endif
 <table class="table-striped table-bordered">
 <thead>
 <tr>
