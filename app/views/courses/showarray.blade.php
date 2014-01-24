@@ -1,5 +1,10 @@
 @extends('layouts.main')
 
+@section('navcomplete')
+<li>{{HTML::linkAction('TermsController@index', "choose different term")}}</li>
+<li>{{HTML::linkAction('TimesController@makecalendar', "google calendar", array(Request::segment(1), Request::segment(2),Session::get('term_id')))}}</li>
+@stop
+
 @section('main')
 
 <table class="table-striped table-bordered">
