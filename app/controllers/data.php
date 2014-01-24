@@ -721,4 +721,23 @@ function prof($inst) {
 		 $queries = DB::getQueryLog();
 		 RETURN var_dump($queries);
 	}
+	
+	public function deptforcopying($dept_id)
+	{
+		$mod=Dept::findOrFail($dept_id);
+		$cs=Helper::courselistwithmodel($mod);
+		foreach($cs AS $course)
+		{
+			$all[]=["term"=>"{$course->term->season} {$course->term->ay}",
+				"crn"=>$course->crn,
+				"number"=>$course->number,
+				"section"=>$course->section,
+				"title"=>$course->title,
+				"credits"=>$course->credits,
+				"enrolled"=>$course->enrollment,
+				"max"=>$course->enrollmentmax];
+		};
+		return View::make('courses.showarray')
+			->with('all',$all);
+	}
 }

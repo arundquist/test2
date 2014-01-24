@@ -41,6 +41,7 @@ Route::get('testallcrn/{crn}', function($crn)
 
 
 Route::get('instructorhistory/{id}', 'InstructorsController@history');
+Route::get('deptcopy/{dept_id}', 'DataController@deptforcopying');
 
 
 
