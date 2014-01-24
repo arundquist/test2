@@ -762,12 +762,19 @@ function prof($inst) {
 			});
 		foreach($cs AS $course)
 		{
+			
+			$hps="";
+			foreach ($course->hps AS $hp)
+			{
+				$hps.=$hp->letter;
+			};
 			$all[]=["term"=>"{$course->term->season} {$course->term->ay}",
 				"crn"=>$course->crn,
 				"number"=>$course->number,
 				"section"=>$course->section,
 				"title"=>$course->title,
 				"credits"=>$course->credits,
+				"hp"=>$hps,
 				"enrolled"=>$course->enrollment,
 				"max"=>$course->enrollmentmax];
 		};
