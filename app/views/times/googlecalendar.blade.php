@@ -3,7 +3,7 @@ BEGIN:VCALENDAR
 X-WR-CALNAME:{{$title}}
 
 @foreach ($courses AS $course)
-@if(!empty($course->times))
+@if(!isset($course->times))
 <?php $days=array();?>
 @foreach($course->times AS $time)
 <?php 
