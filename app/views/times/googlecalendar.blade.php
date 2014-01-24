@@ -3,6 +3,7 @@ BEGIN:VCALENDAR
 X-WR-CALNAME:{{$title}}
 
 @foreach ($courses AS $course)
+@if(!empty($course->times))
 <?php $days=array();?>
 @foreach($course->times AS $time)
 <?php 
@@ -27,6 +28,6 @@ LOCATION:{{$course->room->building->name}} {{$course->room->number}}
 SUMMARY:{{$course->title}}
 
 END:VEVENT
-
+@endif
 @endforeach
 END:VCALENDAR
