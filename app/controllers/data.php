@@ -740,4 +740,38 @@ function prof($inst) {
 		return View::make('courses.showarray')
 			->with('all',$all);
 	}
+	
+	public function deptAllforcopying($dept_id)
+	{
+		$mod=Dept::findOrFail($dept_id);
+		$cs=$mod->courses()
+    	    		->where("cancelled",0)->get();
+    	    	$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+    	    	$roles = $cs->sortBy(function($course)
+			{
+				$sarray=["fall"=>".4",
+				"winter"=>".1",
+				"spring"=>".2",
+				"summer"=>".3"];
+				$ay=$course->term->ay;
+				$season=$course->term->season;
+				$num=$course->number;
+				$num=$num/100000.0;
+				$ay=3000-$ay-$sarray[$season]+$num;
+				return $ay;
+			});
+		foreach($cs AS $course)
+		{
+			$all[]=["term"=>"{$course->term->season} {$course->term->ay}",
+				"crn"=>$course->crn,
+				"number"=>$course->number,
+				"section"=>$course->section,
+				"title"=>$course->title,
+				"credits"=>$course->credits,
+				"enrolled"=>$course->enrollment,
+				"max"=>$course->enrollmentmax];
+		};
+		return View::make('courses.showarray')
+			->with('all',$all);
+	}
 }
