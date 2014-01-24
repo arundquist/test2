@@ -320,6 +320,13 @@ function prof($inst) {
 		};
 	}
 	
+	public function updatebyid($id)
+	{
+		DB::connection()->disableQueryLog();
+		$this->getsinglefromid($id);
+		Return Redirect::back();
+	}
+	
 	public function checkspeed()
 	{
 		$t=time();

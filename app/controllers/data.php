@@ -706,7 +706,7 @@ function prof($inst) {
 	
 	public function crndetails($crn)
 	{
-		$course=Course::with(array('term', 'areas'))
+		$course=Course::with(array('term', 'areas','times'))
 			->where('crn',$crn)->first();
 		echo "<pre>";
 		echo var_dump($course);
