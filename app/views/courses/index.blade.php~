@@ -57,16 +57,15 @@
 </td>
 
 <td>
-{{$course->room->building->name}} {{HTML::linkAction('RoomsController@show',"{$course->room->number}", $course->room->id)}}
+@foreach ($course->rooms AS $room)
+	{{$room->building->name}} {{HTML::linkAction('RoomsController@show',"{$room->number}", $room->id)}}<br/>
+@endforeach
 </td>
 
 <td>
 @foreach($course->times AS $time)
-{{$time->singleletter}}
+{{link_to_action('TimesController@show', "{$time->singleletter}: {$time->beginning}-{$time->end}", $time->id)}}<br/>
 @endforeach
-@if ($course->times->count() >0)
-: {{HTML::linkAction('TimesController@show', "{$course->times[0]->beginning}-{$course->times[0]->end}", $course->times[0]->id)}}
-@endif
 </td>
 
 <td>
