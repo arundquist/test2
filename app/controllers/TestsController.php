@@ -8,7 +8,7 @@ class TestsController extends \BaseController {
 		$courses=$term->courses()
 			->where('updated_at','<', date('Y-m-d'))
 			->get();
-		dd(count($courses));
+		dd(count($courses->lists('updated_at')));
 	}
 
 }
