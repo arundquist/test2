@@ -485,7 +485,7 @@ function prof($inst) {
 	}
 	
 	// here I'm going to try to get the multiple times and rooms working
-	
+	// stupid change placeholder
 	public function getalldetailsmulttimes($string)
 	{
 		$result=array(
