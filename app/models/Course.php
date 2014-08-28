@@ -25,9 +25,9 @@ class Course extends Eloquent {
 		return $this->belongsToMany('Time');
 	}
 	
-	public function room()
+	public function rooms()
 	{
-		return $this->belongsTo('Room');
+		return $this->belongsToMany('Room');
 	}
 	
 	public function hps()

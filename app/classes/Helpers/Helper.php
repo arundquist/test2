@@ -20,7 +20,7 @@ class Helper {
     {
     	    $cs=$mod->courses()->where("term_id",'=',\Session::get('term_id'))
     	    	->where("cancelled",0)->get();
-    	    $cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+    	    $cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
     	    return $cs;
     }
 		

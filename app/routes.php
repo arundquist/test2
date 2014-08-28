@@ -81,6 +81,7 @@ Route::get('getsingle/{crn}/{year}/{term}', 'DataController@getsingle');
 Route::get('crnsactual/{year}/{term}', 'DataController@getcrnsactual');
 Route::get('fromlist', 'DataController@grabfromlist');
 Route::get('testsave', 'CoursesController@saveone');
+Route::get('testmulttimes', 'DataController@testmulttimes');
 Route::get('commontime/{term}/{time}', 'TimesController@common');
 Route::get('Courses/DepartmentCourses/{dept_id}', 'CoursesController@deptcourses');
 Route::get('updatebyid/{id}', 'DataController@updatebyid');

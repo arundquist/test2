@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'test2',
+			'database'  => 'courseschedule',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',

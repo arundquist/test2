@@ -12,6 +12,6 @@ class Room extends Eloquent {
 	
 	public function courses()
 	{
-		return $this->hasMany('Course');
+		return $this->belongsToMany('Course');
 	}
 }
