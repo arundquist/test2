@@ -23,7 +23,7 @@ RRULE:FREQ=WEEKLY;UNTIL={{$endrepeatdate->format('Ymd\THis')}}Z;BYDAY={{implode(
 
 DESCRIPTION:
 
-LOCATION:{{$course->room->building->name}} {{$course->room->number}}
+LOCATION:{{$course->rooms[0]->building->name}} {{$course->room->number}}
 
 SUMMARY:{{$course->title}}
 
