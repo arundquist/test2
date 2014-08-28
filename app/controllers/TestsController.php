@@ -2,11 +2,12 @@
 
 class TestsController extends \BaseController {
 
-	public function getUpdated($term_id)
+	public function getUpdated()
 	{
-		$term=Term::findOrFail($term_id);
-		$courses=$term->courses;
-		dd($courses->lists('updated_at'));
+		$course=Course::where('crn',10560)
+			->where('term_id',19)
+			->first();
+		dd($course);
 	}
 
 }
