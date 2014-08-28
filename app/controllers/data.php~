@@ -484,6 +484,127 @@ function prof($inst) {
 		return $result;
 	}
 	
+	// here I'm going to try to get the multiple times and rooms working
+	// stupid change placeholder
+	// another stupic placeholder
+	public function getalldetailsmulttimes($string)
+	{
+		$result=array(
+			"crn"=>"",
+			"dept"=>"",
+			"num"=>"",
+			"sec"=>"",
+			"instructors"=>array(),
+			"title"=>"",
+			"credits"=>"",
+			"description"=>"",
+			"hps"=>array(),
+			"days"=>array(),
+			"locations"=>array());
+		// this will grab all the various tds
+		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
+		// if the 5th one is "corequisites:" then you have to add
+		// 2 to all the indices after that
+		
+		$add=0;
+		if ($matches2[1][5]=="Corequisites:") 
+		{
+			$add=2;
+		};
+		// grab crn out of link
+		$h=preg_match("/<a.*?>(.*?)</",$matches2[1][0],$crnmatch);
+		$result["crn"]=$crnmatch[1];
+		//grab dept and course and section number
+		$h=preg_match("/([A-Z&]{3,4}) ([0-9L]{4,5})-(.*)/",$matches2[1][1],$deptmatch);
+		$result["dept"]=$deptmatch[1];
+		$result["num"]=$deptmatch[2];
+		$result["sec"]=$deptmatch[3];
+		
+		// grab HP's
+		$h=preg_match_all("/([A-Z]{1})/", $matches2[1][2],$hpmatch);
+		if ($h){$result["hps"]=$hpmatch[1];};
+		
+		//grab instructors
+		// see page 35 for notes on this
+		//$h=preg_match_all("/([A-Za-z]*, [A-Za-z]*)/",$matches2[1][3],$instmatch);
+		$h=preg_match_all("/(.*?)<BR>/", $matches2[1][3],$instmatch);
+		if ($h){$result["instructors"]=$instmatch[1];};
+		//grab title
+		$h=preg_match("/<B>(.*)</", $matches2[1][5+$add], $titlematch);
+		if($h){$result["title"]=$titlematch[1];};
+		
+		// grab credits
+		$h=preg_match("/(.*)\sc/", $matches2[1][6+$add], $creditmatch);
+		if($h){$result["credits"]=$creditmatch[1];};
+		
+		
+		//grab desc
+		$result["description"]=$matches2[1][7+$add];
+		//grab days
+		// here's where I need to make changes
+		// see p. 72 in the old notebook for the thoughts on this
+		$h=preg_match_all("/Class: [A-Z][a-z]+ [0-9]{1,2}-[A-Z][a-z]+ [0-9]{1,2} ([M,T,W,F][a-z]+day[^\s]*)\s([0-9]{1,2}:[0-9]{2}[a,p]m)-([0-9]{1,2}:[0-9]{2}[a,p]m)\s(.*?)<BR>/",$matches2[1][8+$add], $daytimeroom);
+		if($h)
+		{
+			// need to transpose the matches
+			$transpose=array();
+			// I have to take off the 0th row before transposing
+			array_shift($daytimeroom);
+			foreach ($daytimeroom AS $key=>$value)
+			{
+				foreach ($value AS $key2=>$value2)
+				{
+					$transpose[$key2][$key]=$value2;
+				};
+			};
+			// now everything under here should be in a foreach
+			foreach ($transpose AS $daytimeroom)
+			{
+				// grab days
+				$h1=preg_match_all("/([M,T,W,F][a-z]+day)/",$daytimeroom[0],$days);
+				$result["days"][]=['days'=>$days[1],
+						'start'=>$daytimeroom[1],
+						'end'=>$daytimeroom[2]];
+				// I'd like to grab the building and room separate
+				$h2=preg_match("/(.*?)\s([A-Za-z0-9]+)\s$/", $daytimeroom[3],$buildroom);
+				if($h2)
+				{
+					$result["locations"][]=['building'=>$buildroom[1],
+								'room'=>$buildroom[2]];
+				};
+			};
+		};
+		//$h=preg_match_all("/(Monday|Tuesday|Wednesday|Thursday|Friday)/",$matches2[1][8+$add],$daysmatch);
+		//if($h){$result["days"]=array_slice($daysmatch[1],0,-1);};
+		// get times
+		//$h=preg_match_all("/([0-9]{1,2}:[0-9]{2}[ap]m)/", $matches2[1][8+$add],$timematches);
+		
+		return $result;
+	}
+	
+	public function testmulttimes()
+	{
+$string=<<<EOD
+<TR><TD><a href="hamschedule.P_OneSingleCourse?term_in=201213&levl_in=UG&key_in=&format_in=L&sort_flag_in=S&supress_others_in=N&crn_in=36832">36832</a></TD>
+<TD WIDTH="180">CHIN 1120-01</TD>
+<TD WIDTH="100">L </TD>
+<TD WIDTH="300">Yin, Huiying<BR>He, Xi<BR></TD>
+<TD WIDTH="200">Hamline Campus</TD>
+</TR>
+<TR>
+<TD COLSPAN="4"><B>Beginning Chinese II</B></TD>
+</TR><TR>
+<TD COLSPAN="4">4 credits.</TD>
+</TR><TR>
+<TD COLSPAN="4">Goals: To introduce students to 400 individual Chinese characters and to basic vocabulary and grammar; to enable students to do simple translation and make conversation.<BR>Content: Reading, writing, speaking and listening are all equally emphasized in this course.  The vocabulary covered includes words for familiar topics and those that deal with everyday situations.<BR>Taught: Annually, in spring term.<BR>Prerequisite: CHIN 1110.</TD>
+</TR><TR>
+<TD COLSPAN="4">Class: January 30-May 10 Monday,Wednesday,Friday 12:40pm-1:40pm Giddens/Alumni Learning Center 104E <BR>Class: January 31-May 9 Thursday 2:30pm-3:30pm Giddens/Alumni Learning Center 104E <BR>Final exam: May 14 Tuesday 2:45pm-4:45pm Giddens/Alumni Learning Center 104E <BR>Informal Instruction: May 13 Monday 12:30pm-2:30pm Giddens/Alumni Learning Center 103E <BR></TD>
+</TR>
+<TR><TD COLSPAN="4" ALIGN="CENTER"><HR WIDTH
+EOD;
+		dd($this->getalldetailsmulttimes($string));
+	}
+	
 	public function getalldetailstest($string)
 	{
 		$result=array(
@@ -546,14 +667,16 @@ function prof($inst) {
 		foreach ($matches[1] AS $m)
 		{
 			
-			$biglist[]=$this->getalldetails($m);
+			//$biglist[]=$this->getalldetails($m);
+			$biglist[]=$this->getalldetailsmulttimes($m);
 			
 		};
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 120);
 		foreach ($biglist AS $single)
 		{
-			$this->saveone($year,$season, $single);
+			//$this->saveone($year,$season, $single);
+			$this->saveonemulttimes($year,$season, $single);
 		}; 
 	}
 	
@@ -576,7 +699,7 @@ function prof($inst) {
 			$year=$year-1;
 			};
 		$term=Term::where('ay','=',$year)
-		-> where('season','=',$season)->first();
+				-> where('season','=',$season)->first();
 		if ($term==null)
 		{
 			// insert the  new term
@@ -700,6 +823,190 @@ function prof($inst) {
 		$course->instructors()->sync($instructorids);
 		$course->times()->sync($tids);
 		$course->hps()->sync($hpids);
+		// that should do it!
+		$course->save();
+	}
+	
+	// new "saveone" with multiple days
+	
+	public function saveonemulttimes($year,$season,$list)
+	{
+		// see page 24 of notebook for the thoughts on this
+		
+		// first get the term id
+		/* $timelist=array();
+		foreach($list['days'] AS $day)
+		{
+			$timelist[]=['beginning'=>$list['starttime'],
+					'end'=>$list['endtime'],
+					'day'=>$day];
+		}; */
+		
+		If ($season!=11){
+			$year=$year-1;
+			};
+		$term=Term::where('ay','=',$year)
+				-> where('season','=',$season)->first();
+		if ($term==null)
+		{
+			// insert the  new term
+			$term = new Term;
+			$term->ay = $year;
+			$term->season = $season;
+			$term->save();
+		};
+		// now $term->id will be the term id either way
+		
+		// first get the dept id
+		$dept=Dept::where('shortname','=',$list['dept'])->first();
+		if ($dept==null)
+		{
+			// insert the  new dept
+			$dept = new Dept;
+			$dept->shortname = $list['dept'];
+			$dept->save();
+		};
+		// now $dept->id will be the term id either way
+		
+		// first get the building id
+		$roomids=array();
+		if (count($list['locations'])>0)
+		{
+			foreach ($list['locations'] AS $location)
+			{
+				$building=Building::where('name',$location['building'])->first();
+				if ($building==null)
+				{
+					// insert the  new term
+					$building = new Building;
+					$building->name = $location['building'];
+					$building->save();
+				};
+				$room=Room::where('building_id', $building->id)
+					->where('number',$location['room'])->first();
+				if ($room==null)
+				{
+					$room=new Room;
+					$room->building_id=$building->id;
+					$room->number=$location['room'];
+					$room->save();
+				};
+				$roomids[]=$room->id;
+			};
+		};
+		// now $building->id will be the term id either way
+		
+		// for "times" we need to do it as a loop, I guess
+		$tids=array();
+		/* foreach ($timelist AS $tinfo)
+		{
+			$time=Time::where('beginning', '=', $tinfo['beginning'])
+				->where('end', '=', $tinfo['end'])
+				->where('day', '=', $tinfo['day'])
+				->first();
+			if ($time==null)
+			{
+				$time=new Time;
+				$time->beginning=$tinfo['beginning'];
+				$time->end=$tinfo['end'];
+				$time->day=$tinfo['day'];
+				$time->save();
+			};
+			$tids[]=$time->id;
+		}; */
+		foreach ($list['days'] AS $row)
+		{
+			foreach ($row['days'] AS $day)
+			{
+				$time=Time::where('beginning',$row['start'])
+					->where('end', $row['end'])
+					->where('day',$day)
+					->first();
+				if ($time==null)
+				{
+					$time=new Time;
+					$time->beginning=$row['start'];
+					$time->end=$row['end'];
+					$time->day=$day;
+					$time->save();
+				};
+				$tids[]=$time->id;
+			};
+		};
+		// now all ids are in $tids
+		
+		// hps are like times 
+		// these aren't grabbed yet
+		$hpids=array();
+		foreach ($list['hps'] AS $letter)
+		{
+			$hp=Hp::where('letter', '=', $letter)->first();
+			if ($hp==null)
+			{
+				$hp=new Hp;
+				$hp->letter=$letter;
+				$hp->save();
+			};
+			$hpids[]=$hp->id;
+		}; 
+		// now all ids are in $hpids
+		
+		// now the room, use the building id from above
+		/* $room=Room::where('building_id', '=', $building->id)
+		->where('number','=',$list['room'])->first();
+		if ($room==null)
+		{
+			$room=new Room;
+			$room->building_id=$building->id;
+			$room->number=$list['room'];
+			$room->save();
+		} */
+		// now room_id is just $room->id
+		
+		// now instructors. be careful because there's a
+		// many-to-many between instructors and departments
+		// I guess we're just doing the name existence here
+		// but I think that the connection, if it doesn't exist,
+		// between dept and instructor, should be set.
+		$instructorids=array();
+		foreach ($list['instructors'] AS $name)
+		{
+			$instructor=Instructor::where('name', '=', $name)->first();
+			if ($instructor==null)
+			{
+				$instructor=new Instructor;
+				$instructor->name=$name;
+				$instructor->save();
+			};
+			$instructorids[]=$instructor->id;
+		};
+		// now all ids are in $instructorids
+		
+		// now check if crn exists to determine if this is 
+		// update or create
+		
+		$course=Course::where('crn', '=', $list['crn'])
+			->where('term_id',$term->id)->first();
+		if ($course == null)
+		{
+			$course=new Course;
+		};
+		// now set everything and then use push, I guess
+		$course->crn= $list['crn'];
+		$course->term_id=$term->id;
+		$course->dept_id=$dept->id;
+		$course->number=$list['num'];
+		$course->section=$list['sec'];
+		//$course->room_id=$room->id;
+		$course->title=$list['title'];
+		$course->description=$list['description'];
+		$course->credits=$list['credits'];
+		$course->save();
+		// now we do the related models
+		$course->instructors()->sync($instructorids);
+		$course->times()->sync($tids);
+		$course->hps()->sync($hpids);
+		$course->rooms()->sync($roomids);
 		// that should do it!
 		$course->save();
 	}

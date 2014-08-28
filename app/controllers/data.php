@@ -678,6 +678,13 @@ EOD;
 			//$this->saveone($year,$season, $single);
 			$this->saveonemulttimes($year,$season, $single);
 		}; 
+		// check for updated at on today and delete others
+		if ($season!=11){
+			$year=$year-1;
+			};
+		$term=Term::where('ay','=',$year)
+				-> where('season','=',$season)->first();
+		$term->courses()->where('updated_at', '<', date('Y-m-d'))->delete();
 	}
 	
 	// function to take single class data and put in database
