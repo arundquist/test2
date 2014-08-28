@@ -6,7 +6,7 @@ class TestsController extends \BaseController {
 	{
 		$term=Term::findOrFail($term_id);
 		$courses=$term->courses;
-		dd(count($courses->lists('updated_at')));
+		dd($courses->lists('updated_at'));
 	}
 
 }
