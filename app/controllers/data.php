@@ -1061,7 +1061,7 @@ EOD;
 		$title="History for {$mod->shortname}";
 		$cs=$mod->courses()
     	    		->where("cancelled",0)->get();
-    	    	$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+    	    	$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
     	    	$roles = $cs->sortBy(function($course)
 			{
 				$sarray=["fall"=>".4",
