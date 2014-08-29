@@ -2,7 +2,7 @@
 @section('main')
 <div class="jumbotron">
 <h1>
-Welome to the SS, LF, BD, dB!
+Welcome to the SS, LF, BD, dB!
 </h1>
 <p>This is the Super Secret, Lightning Fast, Back Door, dataBase for the Hamline
 Course schedule. It was created by Andy Rundquist as a fun project to flex
