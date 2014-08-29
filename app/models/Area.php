@@ -9,4 +9,6 @@ class Area extends Eloquent {
 	{
 		return $this->belongsToMany('Course');
 	}
+	
+
 }

@@ -9,4 +9,14 @@ class Dept extends Eloquent {
 	{
 		return $this->hasMany('Course');
 	}
+	
+	public function getDeptAttribute()
+	{
+		return $this->shortname;
+	}
+	
+	public function scopeMysort($query)
+	{
+		return $query->orderBy('shortname');
+	}
 }

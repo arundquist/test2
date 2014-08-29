@@ -19,4 +19,15 @@ class Time extends Eloquent {
 		};
 		return 'R';
 	}
+	
+	public function scopeMysort($query)
+	{
+		return $query->orderBy('day');
+	}
+	
+	public function getTimeAttribute()
+	{
+		
+		return $this->day.' '.$this->beginning.'-'.$this->end;
+	}
 }

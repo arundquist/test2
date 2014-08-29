@@ -9,5 +9,30 @@ class TestsController extends \BaseController {
 			->first();
 		dd($course);
 	}
+	
+	public function getSeats($model,$term_id)
+	{
+		$mods=$model::mysort()->get();
+		$mods->load('courses');
+		$countlist=array();
+		foreach ($mods AS $mod)
+		{
+			$name=strtolower($model);
+			$enrollment=$mod->courses()
+						->where('term_id', $term_id)
+						->sum('enrollment');
+			if ($enrollment != '')
+			{
+				$countlist[$mod->id]=['what'=>$mod->$name,
+					'count'=>$enrollment];
+			};
+		};
+		echo "<table>";
+		foreach ($countlist AS $count)
+		{
+			echo "<tr><td>{$count['what']}</td><td>{$count['count']}</td></tr>";
+		};
+		echo "</table>";
+	}
 
 }

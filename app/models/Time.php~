@@ -9,4 +9,14 @@ class Time extends Eloquent {
 	{
 		return $this->belongsToMany('Course');
 	}
+	
+	public function getSingleletterAttribute()
+	{
+		$day=$this->day;
+		If ($day != 'Thursday')
+		{
+			return substr($day, 0, 1);
+		};
+		return 'R';
+	}
 }

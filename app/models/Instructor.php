@@ -10,6 +10,16 @@ class Instructor extends Eloquent {
 		return $this->belongsToMany('Course');
 	}
 	
+	public function getInstructorAttribute()
+	{
+		return $this->name;
+	}
+	
+	public function scopeMysort($query)
+	{
+		return $query->orderBy('name');
+	}
+	
 	
 	
 	

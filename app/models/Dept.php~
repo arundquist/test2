@@ -5,11 +5,6 @@ class Dept extends Eloquent {
 
 	public static $rules = array();
 	
-	public function instructors()
-	{
-		return $this->hasMany('Instructor');
-	}
-	
 	public function courses()
 	{
 		return $this->hasMany('Course');

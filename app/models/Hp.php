@@ -9,4 +9,14 @@ class Hp extends Eloquent {
 	{
 		return $this->belongsToMany('Course');
 	}
+	
+	public function getHpAttribute()
+	{
+		return $this->letter;
+	}
+	
+	public function scopeMysort($query)
+	{
+		return $query->orderBy('letter');
+	}
 }
