@@ -10,5 +10,10 @@ class Area extends Eloquent {
 		return $this->belongsToMany('Course');
 	}
 	
+	public function scopeMysort($query)
+	{
+		return $query->orderBy('area');
+	}
+	
 
 }
