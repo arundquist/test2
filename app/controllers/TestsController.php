@@ -20,7 +20,8 @@ class TestsController extends \BaseController {
 			$name=strtolower($model);
 			$enrollment=$mod->courses()
 						->where('term_id', $term_id)
-						->sum('enrollment');
+						->select(DB::raw('SUM(credits/4 * enrollment) as total'))
+						->pluck('total');
 			if ($enrollment != '')
 			{
 				$countlist[$mod->id]=['what'=>$mod->$name,
