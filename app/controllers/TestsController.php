@@ -31,9 +31,9 @@ class TestsController extends \BaseController {
 			};
 		};
 		echo "<table>";
-		foreach ($countlist AS $count)
+		foreach ($countlist AS $modid=>$count)
 		{
-			echo "<tr><td>{$count['what']}</td><td>{$count['count']}</td></tr>";
+			echo "<tr><td>".link_to_action($model."sController@show", $count['what'], [$modid])."</td><td>{$count['count']}</td></tr>";
 		};
 		echo "</table>";
 	}
