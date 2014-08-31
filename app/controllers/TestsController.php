@@ -15,6 +15,7 @@ class TestsController extends \BaseController {
 		$mods=$model::mysort()->get();
 		$mods->load('courses');
 		$countlist=array();
+		dd($mods);
 		foreach ($mods AS $mod)
 		{
 			$name=strtolower($model);
