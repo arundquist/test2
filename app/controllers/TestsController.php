@@ -13,9 +13,10 @@ class TestsController extends \BaseController {
 	public function getSeats($model,$term_id)
 	{
 		$mods=$model::mysort()->get();
+		dd($mods);
 		$mods->load('courses');
 		$countlist=array();
-		dd($mods);
+		//dd($mods);
 		foreach ($mods AS $mod)
 		{
 			$name=strtolower($model);
