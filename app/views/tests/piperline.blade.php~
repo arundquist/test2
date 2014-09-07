@@ -1,0 +1,10 @@
+@extends('layouts.main')
+
+@section('main')
+{{Form::open(['method'=>'post', 'action'=>['TestsController@postPiperline',$course_id]])}}
+{{Form::text('username', null, ['placeholder'=>'username'])}}<br/>
+{{Form::text('password', null, ['placeholder'=>'password'])}}<br/>
+{{Form::submit('submit')}}
+{{Form::close()}}
+
+@stop
