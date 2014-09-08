@@ -172,11 +172,17 @@ class TestsController extends \BaseController {
 			$avg=round($avg/array_sum($row),2);
 			$avgs[$key]=$avg;
 		};
+		
+		// grabbing comments. for now I'll just grab them all
+		
+		$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
+		//dd($matches);
 		return View::make('tests.evaluation',
 			['betterarray'=>$betterarray,
 			'questions'=>$questions,
 			'avgs'=>$avgs,
-			'course'=>$course]);
+			'course'=>$course,
+			'comments'=>$matches[1]]);
 		
 	}
 

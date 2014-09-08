@@ -31,7 +31,7 @@
 @foreach($courses AS $course)
 <tr>
 <td>{{$course->term->season}} {{$course->term->ay}}</td>
-<td>{{$course->crn}}</td>
+<td>{{link_to($course->url, $course->crn)}}</td>
 <td>{{HTML::linkAction('DeptsController@show', "{$course->dept->shortname}", $course->dept->id)}}</td>
 <td>{{$course->number}}</td>
 <td>{{$course->section}}</td>

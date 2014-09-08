@@ -9,7 +9,7 @@ class CoursesController extends BaseController {
 	 */
 	public function index()
 	{
-		$cs=Course::with(['instructors', 'hps','room.building','dept','times', 'areas'])->get();
+		$cs=Course::with(['instructors', 'hps','room.building','dept','times', 'areas','term'])->get();
 		return View::make('courses.index')
 			->with("courses",$cs);
 	}

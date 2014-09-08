@@ -35,7 +35,7 @@
 <td>{{HTML::linkAction('DeptsController@show', "{$course->dept->shortname}", $course->dept->id)}}</td>
 <td>{{$course->number}}</td>
 <td>{{$course->section}}</td>
-<td>{{$course->title}}</td>
+<td>{{$course->title}} {{link_to_action('TestsController@getPiperline', 'evals', [$course->id])}}</td>
 <td>{{$course->credits}}</td>
 <td>{{HTML::linkRoute('enrollment', "{$course->enrollment} of {$course->enrollmentmax}", array($course->dept->shortname,$course->number))}}</br>
 {{HTML::linkAction('DataController@updatebyid',"{$course->updated_at->diffForHumans()}", $course->id)}}

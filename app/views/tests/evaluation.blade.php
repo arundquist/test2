@@ -2,7 +2,9 @@
 @section('main')
 <h1>Evaluations for {{$course->title}} {{$course->term->season}} {{$course->term->ay}}</h1>
 <h2>Instructor: {{$course->instructors->first()->name}}</h2>
-<table class="table table-striped">
+<div class='row'>
+<div class='col-md-4'>
+<table class="table table-striped table-bordered">
 <thead>
 	<tr>
 		<th>Question</th>
@@ -33,6 +35,17 @@
 	@endforeach
 </tbody>
 </table>
+</div>
+<div class='col-md-8'>
+<ul class='list-group'>
+	@foreach ($comments AS $comment)
+		<li class='list-group-item'>
+			{{$comment}}
+		</li>
+	@endforeach
+</ul>
+</div>
+</div>
 
 
 @stop

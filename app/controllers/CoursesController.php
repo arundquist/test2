@@ -16,7 +16,7 @@ class CoursesController extends BaseController {
 	
 	public function deptcourses($dept_id)
 	{
-		$cs=Course::with(['instructors', 'hps', 'room.building'])
+		$cs=Course::with(['instructors', 'hps', 'rooms.building'])
 			->where('dept_id','=',$dept_id)
 			->where('term_id','=',Session::get('term_id'))->get();
 		return View::make('courses.index')
