@@ -4,6 +4,13 @@
 		<meta charset="utf-8">
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 		<style>
+			@media print {
+			  a[href]:after {
+			    content: none;
+			  }
+			}
+		</style>
+		<style>
 			table form { margin-bottom: 0; }
 			form ul { margin-left: 0; list-style: none; }
 			.error { color: red; font-style: italic; }
