@@ -200,6 +200,13 @@ class TestsController extends \BaseController {
 		//$course=Course::findOrFail($course_id);
 		//$facmodel=$course->instructors->first();
 		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
+		if(!file_exists($cookieFile)) 
+		{
+		    $fh = fopen($cookieFile, "w");
+		    fwrite($fh, "");
+		    fclose($fh);
+		};
 		$cs=Helper::courselistwithmodel($facmodel);
 		$course=$cs->first();
 		
@@ -248,8 +255,8 @@ class TestsController extends \BaseController {
 		 
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies".$sesid.".txt");
-		 curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies".$sesid.".txt");
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		 curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
 		
@@ -264,6 +271,8 @@ class TestsController extends \BaseController {
 		$store = curl_exec($ch);
 		
 		$curl_info = curl_getinfo($ch);
+		curl_close($ch);
+		sleep(1);
 		//dd($curl_info);
 		
 		//var_dump($curl_info);
@@ -279,6 +288,29 @@ class TestsController extends \BaseController {
 		
 		//$poststring="term_code=$fixedstring&crev_code=CLACE&rev=626649&crn=$crn";
 		$poststring="term_code=$fixedstring&crev_code=CLACE";
+		$ch = curl_init();
+		 
+		//Set the URL to work with
+		//curl_setopt($ch, CURLOPT_URL, $loginUrl);
+		
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		
+		 
+		// ENABLE HTTP POST
+		curl_setopt($ch, CURLOPT_POST, 1);
+		 
+		//Set the post parameters
+		//curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
+		 
+		//Handle cookies for the login
+		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		 //curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
+		
+		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
+		
+		
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
 		//curl_setopt($ch, CURLOPT_POST, 0);
@@ -287,6 +319,7 @@ class TestsController extends \BaseController {
 		$curl_info = curl_getinfo($ch);
 		//dd($content);
 		$find=preg_match('%<OPTION VALUE="([0-9]+)">'.$fac.'%', $content, $match);
+		//dd($fac);
 		$rev=$match[1];
 		$questions=['communication',
 				'organization',
@@ -309,7 +342,7 @@ class TestsController extends \BaseController {
 			//dd($poststring);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 			curl_setopt($ch, CURLOPT_URL, $newurl);
-			curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies".$sesid.".txt");
+			curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 			$content = curl_exec($ch);
 			//dd($content);
 			//var_dump($curl_info);
