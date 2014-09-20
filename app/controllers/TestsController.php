@@ -199,6 +199,7 @@ class TestsController extends \BaseController {
 		$facmodel=Instructor::findOrFail($instructor_id);
 		//$course=Course::findOrFail($course_id);
 		//$facmodel=$course->instructors->first();
+		$sesid=Session::GetId();
 		$cs=Helper::courselistwithmodel($facmodel);
 		$course=$cs->first();
 		
@@ -247,8 +248,8 @@ class TestsController extends \BaseController {
 		 
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
-		 curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+		curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies".$sesid.".txt");
+		 curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies".$sesid.".txt");
 		
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
 		
@@ -308,7 +309,7 @@ class TestsController extends \BaseController {
 			//dd($poststring);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 			curl_setopt($ch, CURLOPT_URL, $newurl);
-			curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+			curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies".$sesid.".txt");
 			$content = curl_exec($ch);
 			//dd($content);
 			//var_dump($curl_info);
