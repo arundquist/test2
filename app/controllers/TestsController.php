@@ -350,6 +350,8 @@ class TestsController extends \BaseController {
 			$string=$content;
 			//dd(curl_getinfo($ch));
 			$completion=preg_match('%\('.$crn.'\)[^\(\)]+?(\([^\(\)]+?\))%',$content,$completematch);
+			if (!$completion)
+				continue;
 			$completeinfo[$crn]=$completematch[1];
 			
 			$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
