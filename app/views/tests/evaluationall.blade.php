@@ -8,8 +8,8 @@
 <thead>
 <tr>
 	<th>Question</th>
-	@foreach ($classnames AS $crn=>$title)
-		<th>{{$title}} {{$completeinfo[$crn]}}</th>
+	@foreach ($betterarray AS $crn=>$ba)
+		<th>{{$classnames[$crn]}} {{$completeinfo[$crn]}}</th>
 	@endforeach
 </tr>
 </thead>
