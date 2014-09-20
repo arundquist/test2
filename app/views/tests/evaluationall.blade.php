@@ -17,8 +17,8 @@
 	@foreach ($questions AS $qnum=>$question)
 		<tr>
 			<td>{{$question}}</td>
-			@foreach ($classnames AS $crn=>$title)
-				<td>{{$avgs[$crn][$qnum]}}</td>
+			@foreach ($avgs AS $crn=>$avg)
+				<td>{{$avg[$qnum]}}</td>
 			@endforeach
 		</tr>
 	@endforeach
