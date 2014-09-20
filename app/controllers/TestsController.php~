@@ -185,5 +185,27 @@ class TestsController extends \BaseController {
 			'comments'=>$matches[1]]);
 		
 	}
+	
+	public function getHps($dept_name)
+	{
+		//$dept=Dept::findOrFail($dept_id);
+		$dept=Dept::where('shortname',strtoupper($dept_name))->firstOrFail();
+		// get all the hp letters
+		$hps=Hp::orderBy('letter')->get();
+		$term=Term::findOrFail(Session::get('term_id'));
+		$list=array();
+		foreach ($hps AS $hp)
+		{
+			$list[$hp->letter]=$hp->courses()
+				->where('term_id', Session::get('term_id'))
+				->where('dept_id', $dept->id)
+				->get();
+			
+		};
+		return View::make('tests.hps',
+			['list'=>$list,
+			'term'=>$term,
+			'dept'=>$dept]);
+	}
 
 }

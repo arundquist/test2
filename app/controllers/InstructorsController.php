@@ -45,7 +45,8 @@ class InstructorsController extends BaseController {
 		$mod=Instructor::findOrFail($id);
 		$cs=Helper::courselistwithmodel($mod);
 		$link=HTML::linkAction('InstructorsController@history', "full history", $mod->id);
-		$title="Instructor: {$mod->name} ($link)";
+		$otherlink=link_to_action('TestsController@getPiperlineall', "all evals for this term", $mod->id);
+		$title="Instructor: {$mod->name} ($link) ($otherlink)";
 		return View::make('courses.index')
 			->with('courses',$cs)
 			->with('title',$title);

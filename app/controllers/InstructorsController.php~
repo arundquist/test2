@@ -89,7 +89,7 @@ class InstructorsController extends BaseController {
 		$instructor=Instructor::findOrFail($id);
 		$title="{$instructor->name} full history";
 		$courses=$instructor->courses;
-		$courses->load('instructors', 'hps','room.building','dept','times', 'areas', 'term');
+		$courses->load('instructors', 'hps','rooms.building','dept','times', 'areas', 'term');
 		$roles = $courses->sortBy(function($course)
 			{
 				$sarray=["fall"=>".4",

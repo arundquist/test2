@@ -11,7 +11,7 @@ page should fail with all kinds of weird warnings. If you do have access (ie you
 the teacher of the course or you're a chair of the teacher etc) you should
 see a formatted table of scores. Have fun!
 </div>
-{{Form::open(['method'=>'post', 'action'=>['TestsController@postPiperline',$course_id]])}}
+{{Form::open(['method'=>'post', 'action'=>['TestsController@post'.$path,$course_id]])}}
 {{Form::text('username', null, ['placeholder'=>'username'])}}<br/>
 {{Form::password('password', null, ['placeholder'=>'password'])}}<br/>
 {{Form::submit('submit')}}
