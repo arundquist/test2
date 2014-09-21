@@ -45,8 +45,63 @@ class TestsController extends \BaseController {
 			'path'=>'Piperline']);
 	}
 	
+	public function getPiperlinetest($user,$pass)
+	{
+		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies167.txt";
+		
+		
+		
+		$username=$user;
+		$password=$pass;
+		$url="https://piperline.hamline.edu/pls/prod/twbkwbis.P_ValLogin";
+		
+		
+		//$username = 'myuser';
+		//$password = 'mypass';
+		$loginUrl = $url;
+		 
+		//init curl
+		$ch = curl_init();
+		 
+		//Set the URL to work with
+		curl_setopt($ch, CURLOPT_URL, $loginUrl);
+		
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		
+		 
+		// ENABLE HTTP POST
+		curl_setopt($ch, CURLOPT_POST, 1);
+		 
+		//Set the post parameters
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
+		 
+		//Handle cookies for the login
+		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+		//curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
+		// curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
+		
+		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
+		
+		 
+		//Setting CURLOPT_RETURNTRANSFER variable to 1 will force cURL
+		//not to print out the results of its query.
+		//Instead, it will return the results as a string return value
+		//from curl_exec() instead of the usual true/false.
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		 
+		//execute the request (the login)
+		$store = curl_exec($ch);
+		$store2=curl_exec($ch);
+		//curl_close($ch);
+	}
+	
 	public function postPiperline($course_id)
 	{
+		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
 		$course=Course::findOrFail($course_id);
 		$fac=$course->instructors->first()->name;
 		
@@ -90,8 +145,10 @@ class TestsController extends \BaseController {
 		 
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
-		 curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+		//curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
+		// curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
 		
@@ -104,14 +161,17 @@ class TestsController extends \BaseController {
 		 
 		//execute the request (the login)
 		$store = curl_exec($ch);
+		$store2 =curl_exec($ch);
 		
 		$curl_info = curl_getinfo($ch);
 		//dd($curl_info);
+		//dd('stopped after login');
 		
 		//var_dump($curl_info);
 		 
 		//the login is now done and you can continue to get the
 		//protected content.
+		
 		 
 		//set the URL to the protected file
 		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalSummary";
@@ -127,6 +187,7 @@ class TestsController extends \BaseController {
 		//curl_setopt($ch, CURLOPT_POST, 0);
 		//execute the request
 		$content = curl_exec($ch);
+		//dd('now second one sent');
 		$curl_info = curl_getinfo($ch);
 		//dd($content);
 		$find=preg_match('%<OPTION VALUE="([0-9]+)">'.$fac.'%', $content, $match);
@@ -135,7 +196,7 @@ class TestsController extends \BaseController {
 		//dd($poststring);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
-		curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
+		//curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		$content = curl_exec($ch);
 		//var_dump($curl_info);
 		//var_dump($content);
@@ -194,19 +255,36 @@ class TestsController extends \BaseController {
 			'path'=>"Piperlineall"]);
 	}
 	
+	public function getFilecreate()
+	{
+		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
+		if(!file_exists($cookieFile)) 
+		{
+		    //dd($cookieFile);
+		    $fh = fopen($cookieFile, "w");
+		    fwrite($fh, "");
+		    fclose($fh);
+		    echo "did it";
+		};
+		echo "didn't do it";
+	}
+	
 	public function postPiperlineall($instructor_id)
 	{
 		$facmodel=Instructor::findOrFail($instructor_id);
 		//$course=Course::findOrFail($course_id);
 		//$facmodel=$course->instructors->first();
 		$sesid=Session::GetId();
+		
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
-		if(!file_exists($cookieFile)) 
+		/* if(!file_exists($cookieFile)) 
 		{
-		    $fh = fopen($cookieFile, "w");
+		    //dd($cookieFile);
+			$fh = fopen($cookieFile, "w");
 		    fwrite($fh, "");
 		    fclose($fh);
-		};
+		}; */
 		$cs=Helper::courselistwithmodel($facmodel);
 		$course=$cs->first();
 		
@@ -269,10 +347,12 @@ class TestsController extends \BaseController {
 		 
 		//execute the request (the login)
 		$store = curl_exec($ch);
+		$store2 = curl_exec($ch);
+		$poststring="term_code=$fixedstring&crev_code=CLACE";
 		
 		$curl_info = curl_getinfo($ch);
-		curl_close($ch);
-		sleep(1);
+		//curl_close($ch);
+		//sleep(2);
 		//dd($curl_info);
 		
 		//var_dump($curl_info);
