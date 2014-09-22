@@ -143,9 +143,13 @@ class TestsController extends \BaseController {
 		if (!$completion)
 			return null;
 		$completeinfo=$completematch[1];
-		
+		$xlst=preg_match('%<TD CLASS="dddefault">XLST%',$string);
+		if ($xlst)
+			$start = 4;
+		else
+			$start=5;
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],-70,70);
+		$scores=array_slice($matches[1],$start,70);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
 		{

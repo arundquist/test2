@@ -145,7 +145,7 @@ class TestsController extends \BaseController {
 		$completeinfo=$completematch[1];
 		
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],5,70);
+		$scores=array_slice($matches[1],-70,70);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
 		{
@@ -295,7 +295,8 @@ class TestsController extends \BaseController {
 			'effective',
 			'valuable'];
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],5,70);
+		$scores=array_slice($matches[1],-70,70);
+		//dd($matches[1]);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
 		{
@@ -516,7 +517,7 @@ class TestsController extends \BaseController {
 			$completeinfo[$crn]=$completematch[1];
 			
 			$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-			$scores[$crn]=array_slice($matches[1],5,70);
+			$scores[$crn]=array_slice($matches[1],-70,70);
 			$betterarray[$crn]=array();
 			for ($i=0; $i<10; $i++)
 			{
@@ -591,6 +592,7 @@ class TestsController extends \BaseController {
 	
 	public function postFpc()
 	{
+		ini_set('max_execution_time', 300);
 		$this->evallogin(Input::get('username'), Input::get('password'));
 		$facmod=Instructor::findOrFail(Input::get('instructor'));
 		$questions=['communication',
@@ -608,7 +610,7 @@ class TestsController extends \BaseController {
 		foreach (Input::get('termids') AS $term_id => $code)
 		{
 			$rev=$this->verifyfac($code,$facmod->name);
-			if (!is_null($rev))
+			if ($rev != false)
 			{
 				$term=Term::findOrFail($term_id);
 				$termstring="{$term->ay} {$term->season}";
@@ -619,9 +621,10 @@ class TestsController extends \BaseController {
 					//$all[$term_id][$c->id]=$this->crnevals($code, $c->crn, $rev);
 					//$names[$term_id][$c->id]=$c->title;
 					$evals=$this->crnevals($code, $c->crn, $rev);
-					$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
-							'term'=>$termstring,
-							'avgs'=>$evals['avgs']];
+					if (!is_null($evals))
+						$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
+								'term'=>$termstring,
+								'avgs'=>$evals['avgs']];
 				};
 			};
 		};
