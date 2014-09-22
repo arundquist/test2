@@ -45,4 +45,20 @@ class Term extends Eloquent {
 			"summer"=>"0815"];
 		return "{$this->ay}{$months[$this->season]}";
 	}
+	
+	public function getCodeAttribute()
+	{
+		$year=$this->ay;
+		$season=$this->season;
+		$sarray=["fall"=>"11",
+			"winter"=>"12",
+			"spring"=>"13",
+			"summer"=>"15"];
+		$season=$sarray[$season];
+		If ($season!=11){
+			$year=$year-1;
+			};
+		$fixedstring=$year.$season;
+		return $fixedstring;
+	}
 }

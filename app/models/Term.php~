@@ -27,4 +27,22 @@ class Term extends Eloquent {
 		};
 		return $value+1;
 	}
+	
+	public function getStartdateAttribute()
+	{
+		$months=["fall"=>"0901",
+			"winter"=>"0101",
+			"spring"=>"0201",
+			"summer"=>"0601"];
+		return "{$this->ay}{$months[$this->season]}";
+	}
+	
+	public function getEnddateAttribute()
+	{
+		$months=["fall"=>"1215",
+			"winter"=>"0131",
+			"spring"=>"0515",
+			"summer"=>"0815"];
+		return "{$this->ay}{$months[$this->season]}";
+	}
 }

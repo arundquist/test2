@@ -45,10 +45,10 @@ class TestsController extends \BaseController {
 			'path'=>'Piperline']);
 	}
 	
-	public function getPiperlinetest($user,$pass)
+	public function evallogin($user,$pass)
 	{
 		$sesid=Session::GetId();
-		$cookieFile=storage_path() . "/cookies167.txt";
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
 		
 		
 		
@@ -96,6 +96,87 @@ class TestsController extends \BaseController {
 		$store = curl_exec($ch);
 		$store2=curl_exec($ch);
 		//curl_close($ch);
+	}
+	
+	public function verifyfac($fixedstring, $fac)
+	{
+		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
+		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalView";
+		$poststring="term_code=$fixedstring&crev_code=CLACE";
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
+		curl_setopt($ch, CURLOPT_URL, $newurl);
+		$content = curl_exec($ch);
+		$find=preg_match('%<OPTION VALUE="([0-9]+)">'.$fac.'%', $content, $match);
+		if ($find)
+			return $match[1];
+		else
+			return false;
+	}
+	
+	public function crnevals($fixedstring, $crn, $rev)
+	{
+		$sesid=Session::GetId();
+		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
+		$poststring="term_code=$fixedstring&crev_code=CLACE&rev=$rev&crn=$crn";
+		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalView";
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
+		curl_setopt($ch, CURLOPT_URL, $newurl);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
+		curl_setopt($ch, CURLOPT_URL, $newurl);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
+		$content = curl_exec($ch);
+		$string=$content;
+		$completion=preg_match('%\('.$crn.'\)[^\(\)]+?(\([^\(\)]+?\))%',$content,$completematch);
+		if (!$completion)
+			return null;
+		$completeinfo=$completematch[1];
+		
+		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
+		$scores=array_slice($matches[1],5,70);
+		$betterarray=array();
+		for ($i=0; $i<10; $i++)
+		{
+			for ($j=0; $j<7; $j++)
+			{
+				$betterarray[$i][$j]=$scores[$i*7+$j];
+			};
+		};
+		$avgs=array();
+		foreach ($betterarray AS $key=>$row)
+		{
+			$avg=0;
+			foreach ($row AS $val=>$column)
+			{
+				$avg+=($val+1)*($column);
+			};
+			$avg=round($avg/array_sum($row),2);
+			$avgs[$key]=$avg;
+		};
+		
+		// grabbing comments. for now I'll just grab them all
+		
+		$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
+		//dd($matches);
+		$comments=$matches[1];
+		$all=['scores'=>$scores,
+			'betterarray'=>$betterarray,
+			'avgs'=>$avgs,
+			'comments'=>$comments,
+			'completeinfo'=>$completeinfo];
+		return $all;
 	}
 	
 	public function postPiperline($course_id)
@@ -495,6 +576,60 @@ class TestsController extends \BaseController {
 			['list'=>$list,
 			'term'=>$term,
 			'dept'=>$dept]);
+	}
+	
+	public function getFpc()
+	{
+		$instructors=Instructor::orderBy('name')->get();
+		$terms=Term::orderBy('ay','DESC')
+			->orderBy('season','DESC')
+			->get();
+		return View::make('tests.fpc',
+			['instructors'=>$instructors,
+			'terms'=>$terms]);
+	}
+	
+	public function postFpc()
+	{
+		ini_set('max_execution_time', 300);
+		$this->evallogin(Input::get('username'), Input::get('password'));
+		$facmod=Instructor::findOrFail(Input::get('instructor'));
+		$questions=['communication',
+				'organization',
+				'environment',
+				'active',
+				'standards',
+				'feedback',
+				'assistance',
+				'evaluation',
+				'effective',
+				'valuable'];
+		$all=array();
+		$names=array();
+		foreach (Input::get('termids') AS $term_id => $code)
+		{
+			$rev=$this->verifyfac($code,$facmod->name);
+			if (!is_null($rev))
+			{
+				$term=Term::findOrFail($term_id);
+				$termstring="{$term->ay} {$term->season}";
+				$cs=$facmod->courses()->where("term_id",$term_id)
+					->where("cancelled",0)->get();
+				foreach ($cs AS $c)
+				{
+					//$all[$term_id][$c->id]=$this->crnevals($code, $c->crn, $rev);
+					//$names[$term_id][$c->id]=$c->title;
+					$evals=$this->crnevals($code, $c->crn, $rev);
+					$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
+							'term'=>$termstring,
+							'avgs'=>$evals['avgs']];
+				};
+			};
+		};
+		return View::make('tests.fpcdisplay',
+			['fac'=>$facmod,
+			'all'=>$all,
+			'questions'=>$questions]);
 	}
 
 }
