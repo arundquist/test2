@@ -609,7 +609,7 @@ class TestsController extends \BaseController {
 		foreach (Input::get('termids') AS $term_id => $code)
 		{
 			$rev=$this->verifyfac($code,$facmod->name);
-			if (!is_null($rev))
+			if ($rev != false)
 			{
 				$term=Term::findOrFail($term_id);
 				$termstring="{$term->ay} {$term->season}";
@@ -620,9 +620,10 @@ class TestsController extends \BaseController {
 					//$all[$term_id][$c->id]=$this->crnevals($code, $c->crn, $rev);
 					//$names[$term_id][$c->id]=$c->title;
 					$evals=$this->crnevals($code, $c->crn, $rev);
-					$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
-							'term'=>$termstring,
-							'avgs'=>$evals['avgs']];
+					if (!is_null($evals))
+						$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
+								'term'=>$termstring,
+								'avgs'=>$evals['avgs']];
 				};
 			};
 		};
