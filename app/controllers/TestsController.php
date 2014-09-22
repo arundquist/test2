@@ -38,6 +38,30 @@ class TestsController extends \BaseController {
 		echo "</table>";
 	}
 	
+	public function getDeptseats($deptstring)
+	{
+		$dept=Dept::where('shortname',strtoupper($deptstring))->first();
+		$cs=Helper::courselistwithmodel($dept);
+		$facids=array();
+		foreach ($cs AS $c)
+		{
+			foreach ($c->instructors AS $inst)
+			{
+				$facids["{$inst->name}"][]=$c->enrollment;
+				
+			};
+		};
+		foreach ($facids AS $name=>$value)
+		{
+			echo "$name: ";
+			$sum=array_sum($value);
+			echo implode("+",$value);
+			echo "= $sum<br/>";
+		}
+		
+		
+	}
+	
 	public function getPiperline($course_id)
 	{
 		return View::make('tests.piperline',
