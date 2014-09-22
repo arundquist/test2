@@ -295,7 +295,8 @@ class TestsController extends \BaseController {
 			'effective',
 			'valuable'];
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],5,70);
+		$scores=array_slice($matches[1],-70,70);
+		//dd($matches[1]);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
 		{
