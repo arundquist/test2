@@ -51,6 +51,7 @@ class TestsController extends \BaseController {
 				
 			};
 		};
+		ksort($facids);
 		foreach ($facids AS $name=>$value)
 		{
 			echo "$name: ";
