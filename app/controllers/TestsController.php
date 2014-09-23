@@ -204,7 +204,8 @@ class TestsController extends \BaseController {
 			{
 				$avg+=($val+1)*($column);
 			};
-			$avg=round($avg/array_sum($row),2);
+			if ($avg != 0)	
+				$avg=round($avg/array_sum($row),2);
 			$avgs[$key]=$avg;
 		};
 		//dd($avgs);

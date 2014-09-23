@@ -208,6 +208,7 @@ class TestsController extends \BaseController {
 			$avgs[$key]=$avg;
 		};
 		//dd($avgs);
+		$overallavg=array_sum($avgs)/10;
 		
 		// now to grab the overall comments
 		$oc=preg_match_all('%<TH CLASS="ddlabel" scope="row" colspan="6">Comments:</TH>.*?<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s',
@@ -248,7 +249,8 @@ class TestsController extends \BaseController {
 			'avgs'=>$avgs,
 			'comments'=>$comments,
 			'completeinfo'=>$completeinfo,
-			'overallcomments'=>$overallcomments];
+			'overallcomments'=>$overallcomments,
+			'overallavg'=>$overallavg];
 		return $all;
 	}
 	
@@ -712,7 +714,8 @@ class TestsController extends \BaseController {
 								'scores'=>$evals['scores'],
 								'avgs'=>$evals['avgs'],
 								'comments'=>$evals['comments'],
-								'overallcomments'=>$evals['overallcomments']];
+								'overallcomments'=>$evals['overallcomments'],
+								'overallavg'=>$evals['overallavg']];
 				};
 			};
 		};
