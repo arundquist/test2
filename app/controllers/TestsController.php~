@@ -173,6 +173,49 @@ class TestsController extends \BaseController {
 			$start = 4;
 		else
 			$start=5;
+		$startstring='<TH CLASS="ddlabel" scope="row" >VALUE</TH>
+<TH CLASS="ddlabel" scope="row" colspan="4">.*?</TH>
+<TH CLASS="ddlabel" scope="row" >NUM</TH>';
+		$endstring='<TD CLASS="dddefault"><B>MAX:';
+		$qq=preg_match_all('%'.$startstring.'(.*?)(?=<TH)%s', $string, $qmatch);
+		$scores=array();
+		$comments=array();
+		foreach ($qmatch[1] AS $key=>$m)
+		{
+			$qs=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $m,$matches);
+			$scores[$key]=$matches[1];
+			$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $m, $matches);
+			if ($cm)
+			{
+				$comments[$key]=$matches[1];
+			} else {
+				$comments[$key]=array();
+			};
+		};
+		$scores=array_slice($scores,1,10);
+		$comments=array_slice($comments,1,10);
+		// do averages
+		$avgs=array();
+		//dd($scores);
+		foreach ($scores AS $key=>$row)
+		{
+			$avg=0;
+			foreach ($row AS $val=>$column)
+			{
+				$avg+=($val+1)*($column);
+			};
+			$avg=round($avg/array_sum($row),2);
+			$avgs[$key]=$avg;
+		};
+		//dd($avgs);
+		
+		// now to grab the overall comments
+		$oc=preg_match_all('%<TH CLASS="ddlabel" scope="row" colspan="6">Comments:</TH>.*?<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s',
+			$string,$ocmatch);
+		$overallcomments=array();
+		if ($oc)
+			$overallcomments=$ocmatch[1];
+		/*		
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
 		$scores=array_slice($matches[1],$start,70);
 		$betterarray=array();
@@ -200,11 +243,12 @@ class TestsController extends \BaseController {
 		$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
 		//dd($matches);
 		$comments=$matches[1];
+		*/
 		$all=['scores'=>$scores,
-			'betterarray'=>$betterarray,
 			'avgs'=>$avgs,
 			'comments'=>$comments,
-			'completeinfo'=>$completeinfo];
+			'completeinfo'=>$completeinfo,
+			'overallcomments'=>$overallcomments];
 		return $all;
 	}
 	
@@ -665,7 +709,10 @@ class TestsController extends \BaseController {
 					if (!is_null($evals))
 						$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
 								'term'=>$termstring,
-								'avgs'=>$evals['avgs']];
+								'scores'=>$evals['scores'],
+								'avgs'=>$evals['avgs'],
+								'comments'=>$evals['comments'],
+								'overallcomments'=>$evals['overallcomments']];
 				};
 			};
 		};
