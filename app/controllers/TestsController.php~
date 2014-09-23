@@ -38,6 +38,31 @@ class TestsController extends \BaseController {
 		echo "</table>";
 	}
 	
+	public function getDeptseats($deptstring)
+	{
+		$dept=Dept::where('shortname',strtoupper($deptstring))->first();
+		$cs=Helper::courselistwithmodel($dept);
+		$facids=array();
+		foreach ($cs AS $c)
+		{
+			foreach ($c->instructors AS $inst)
+			{
+				$facids["{$inst->name}"][]=$c->enrollment;
+				
+			};
+		};
+		ksort($facids);
+		foreach ($facids AS $name=>$value)
+		{
+			echo "$name: ";
+			$sum=array_sum($value);
+			echo implode("+",$value);
+			echo "= $sum<br/>";
+		}
+		
+		
+	}
+	
 	public function getPiperline($course_id)
 	{
 		return View::make('tests.piperline',
@@ -143,9 +168,13 @@ class TestsController extends \BaseController {
 		if (!$completion)
 			return null;
 		$completeinfo=$completematch[1];
-		
+		$xlst=preg_match('%<TD CLASS="dddefault">XLST%',$string);
+		if ($xlst)
+			$start = 4;
+		else
+			$start=5;
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],-70,70);
+		$scores=array_slice($matches[1],$start,70);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
 		{
@@ -294,8 +323,13 @@ class TestsController extends \BaseController {
 			'evaluation',
 			'effective',
 			'valuable'];
+		$xlst=preg_match('%<TD CLASS="dddefault">XLST%',$string);
+		if ($xlst)
+			$start = 4;
+		else
+			$start=5;
 		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],-70,70);
+		$scores=array_slice($matches[1],$start,70);
 		//dd($matches[1]);
 		$betterarray=array();
 		for ($i=0; $i<10; $i++)
@@ -516,8 +550,15 @@ class TestsController extends \BaseController {
 				continue;
 			$completeinfo[$crn]=$completematch[1];
 			
+			//$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
+			//$scores[$crn]=array_slice($matches[1],-70,70);
+			$xlst=preg_match('%<TD CLASS="dddefault">XLST%',$string);
+			if ($xlst)
+				$start = 4;
+			else
+				$start=5;
 			$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-			$scores[$crn]=array_slice($matches[1],-70,70);
+			$scores[$crn]=array_slice($matches[1],$start,70);
 			$betterarray[$crn]=array();
 			for ($i=0; $i<10; $i++)
 			{
