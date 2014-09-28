@@ -98,6 +98,10 @@ class TimesController extends BaseController {
 		$title="none";
 		switch ($type)
 		{
+		case "tests":
+			$title="{$term->ay} {$term->season} ";
+			$title.=Session::getId();
+			break;
 		case "depts":
 			$s=Dept::findOrFail($id);
 			$title="{$s->shortname} {$term->ay} {$term->season}";
@@ -125,7 +129,10 @@ class TimesController extends BaseController {
 		default: return "oops";
 		};
 		
-		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
+		if($type=='tests')
+			$cs=Course::whereIn('id', array_unique(Session::get('user.classes')))->get();
+		else
+			$cs=$s->courses()->where("term_id",'=',$term_id)->get();
 		$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
 		$v=View::make('times.googlecalendar')
 			->with('courses',$cs)

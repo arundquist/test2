@@ -1,5 +1,5 @@
 <?php
-
+//use Cogitatio\Sparkline\Sparkline;
 class TestsController extends \BaseController {
 
 	public function getUpdated()
@@ -724,6 +724,71 @@ class TestsController extends \BaseController {
 			['fac'=>$facmod,
 			'all'=>$all,
 			'questions'=>$questions]);
+	}
+	
+	public function spark($vals)
+	{
+		
+		//$vals=[4,5,32,2,0,6,7];
+		$max=max($vals);
+		$h=25;
+		$w=35;
+		$d=$w/7;
+		$ret= "<svg width='$w' height='$h'>";
+		$ret.= "<polyline points=\"0,$h ";
+		foreach ($vals AS $key=>$val)
+		{
+			$x=$key/7*$w;
+			$y=($max-$val)*$h/$max;
+			$val=$val*10;
+			$x2=$x+$d;
+			$ret.= "$x,$y $x2,$y ";
+		};
+		$ret.= $w.','.$h.'" style="fill:red;stroke:red;stroke-width:2" /></svg>';
+		echo $ret;
+    	}
+    	
+    	public function getTestspark()
+    	{
+    		return Helper::spark([34,23,54,32,19,24,40]);
+    	}
+    	
+    	public function getAddclass($id)
+    	{
+    		$class=Course::findOrFail($id);
+    		Session::push('user.classes', $id);
+    		Return Redirect::back();
+    	}
+    	
+    	public function getDeleteclass($id)
+    	{
+    		$class=Course::findOrFail($id);
+    		Session::put('user.classes', array_diff(Session::get('user.classes'), [$id]));
+    		Return Redirect::back();
+    	}
+    	
+    	public function getClearclasses()
+    	{
+    		Session::forget('user.classes');
+    		Return Redirect::to('/');
+    	}
+    	
+    	public function getShowmine()
+    	{
+    		$ids=array_unique(Session::get('user.classes'));
+    		$cs=Course::whereIn('id',$ids)->get();
+    		$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
+    		$title="Your chosen courses ";
+    		$title.="Click on the class title to remove it from this list. ";
+    		$title.=link_to_action('TestsController@getClearclasses', 'Delete all');
+		return View::make('courses.index')
+			->with('courses',$cs)
+			->with('title',$title);
+	}
+	
+	public function getCheckclasses()
+	{
+		return dd(Session::get('user.classes'));
 	}
 
 }

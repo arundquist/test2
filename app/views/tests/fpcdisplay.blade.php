@@ -21,7 +21,8 @@ question. The class name is linked to the "overall" questions for that course</p
 				<td>{{$evals['term']}}</td>
 				<td><a href="#{{$c_id}}">{{$evals['name']}} ({{$evals['overallavg']}})</a></td>
 				@foreach ($evals['avgs'] AS $key=>$avg)
-					<td><a href="#{{$c_id}}-{{$key}}">{{$avg}}</a></td>
+					<td>{{Helper::spark($evals['scores'][$key])}}<br/>
+					<a href="#{{$c_id}}-{{$key}}">{{$avg}}</a></td>
 				@endforeach
 			</tr>
 		@endforeach

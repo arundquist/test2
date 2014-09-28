@@ -126,7 +126,7 @@ class TimesController extends BaseController {
 		};
 		
 		$cs=$s->courses()->where("term_id",'=',$term_id)->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
 		$v=View::make('times.googlecalendar')
 			->with('courses',$cs)
 			->with('term', $term)
