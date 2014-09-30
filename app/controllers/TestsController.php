@@ -710,7 +710,10 @@ class TestsController extends \BaseController {
 					//$names[$term_id][$c->id]=$c->title;
 					$evals=$this->crnevals($code, $c->crn, $rev);
 					if (!is_null($evals))
-						$all[$c->id]=['name'=>"{$c->title} {$evals['completeinfo']}",
+						$all[$c->id]=['name'=>"{$c->dept->shortname}
+									{$c->number}
+									{$c->title}
+									{$evals['completeinfo']}",
 								'term'=>$termstring,
 								'scores'=>$evals['scores'],
 								'avgs'=>$evals['avgs'],
