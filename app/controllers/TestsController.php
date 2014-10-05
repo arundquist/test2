@@ -695,6 +695,8 @@ class TestsController extends \BaseController {
 				'valuable'];
 		$all=array();
 		$names=array();
+		$wholenum=0;
+		$wholeden=0;
 		foreach (Input::get('termids') AS $term_id => $code)
 		{
 			$rev=$this->verifyfac($code,$facmod->name);
@@ -710,6 +712,17 @@ class TestsController extends \BaseController {
 					//$names[$term_id][$c->id]=$c->title;
 					$evals=$this->crnevals($code, $c->crn, $rev);
 					if (!is_null($evals))
+					{
+						// add to numerator and denominator
+						// for the whole average
+						foreach($evals['scores'] AS $qnum=>$row)
+						{
+							foreach ($row AS $val=>$num)
+							{
+								$wholenum+=($val+1)*$num;
+								$wholeden+=$num;
+							};
+						};
 						$all[$c->id]=['name'=>"{$c->dept->shortname}
 									{$c->number}
 									{$c->title}
@@ -720,13 +733,18 @@ class TestsController extends \BaseController {
 								'comments'=>$evals['comments'],
 								'overallcomments'=>$evals['overallcomments'],
 								'overallavg'=>$evals['overallavg']];
+					}
 				};
 			};
 		};
+		$wholeavg=round($wholenum/$wholeden,2);
+		//dd($wholeavg);
 		return View::make('tests.fpcdisplay',
 			['fac'=>$facmod,
 			'all'=>$all,
-			'questions'=>$questions]);
+			'questions'=>$questions,
+			'wholeavg'=>$wholeavg,
+			'totalvotes'=>$wholeden]);
 	}
 	
 	public function spark($vals)

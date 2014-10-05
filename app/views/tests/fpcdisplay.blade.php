@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('main')
-<h1>Evaluations for {{$fac->name}}</h2>
+<h2>Evaluations for {{$fac->name}}</h2>
+<h3>{{$totalvotes}} total marks with an average of {{$wholeavg}}</h3>
 <p>Note that every link just jumps down to the score breakdown and comments for that 
 question. The class name is linked to the "overall" questions for that course</p>
 <div class='row'>
