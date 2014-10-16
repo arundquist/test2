@@ -814,7 +814,9 @@ class TestsController extends \BaseController {
 	
 	public function getHphistory($letter)
 	{
-		$terms=Term::all();
+		$terms=Term::orderBy('ay','DESC')
+			->orderBy('season','DESC')
+			->get();
 		$hpmodel=Hp::with('courses')->where('letter',$letter)->first();
 		$info=array();
 		echo "<ul>";
