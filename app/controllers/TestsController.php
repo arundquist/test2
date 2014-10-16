@@ -811,5 +811,22 @@ class TestsController extends \BaseController {
 	{
 		return dd(Session::get('user.classes'));
 	}
+	
+	public function getHphistory($letter)
+	{
+		$terms=Term::all();
+		$hpmodel=Hp::with('courses')->where('letter',$letter)->first();
+		$info=array();
+		echo "<ul>";
+		foreach ($terms AS $term)
+		{
+			$courses=$hpmodel->courses()->where('term_id',$term->id)->sum('enrollment');
+			$info[$term->id]=$courses;
+			echo "<li>{$term->ay} {$term->season}: $courses";
+		};
+		echo "</li>";
+		
+			
+	}
 
 }
