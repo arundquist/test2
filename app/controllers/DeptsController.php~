@@ -42,11 +42,12 @@ class DeptsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$dept=Dept::findOrFail($id);
-		$cs=$dept->courses()->where("term_id",'=',Session::get('term_id'))->get();
-		$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+		$mod=Dept::findOrFail($id);
+		$cs=Helper::courselistwithmodel($mod);
+		$title="Department: {$mod->shortname}";
 		return View::make('courses.index')
-			->with('courses',$cs);
+			->with('courses',$cs)
+			->with('title',$title);
 	}
 
 	/**

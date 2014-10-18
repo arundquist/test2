@@ -44,7 +44,10 @@ class DeptsController extends BaseController {
 	{
 		$mod=Dept::findOrFail($id);
 		$cs=Helper::courselistwithmodel($mod);
-		$title="Department: {$mod->shortname}";
+		$title="Department: {$mod->shortname} ";
+		$title.=link_to_action('TestsController@getPietest', 
+				'enrollment breakdown',
+				[$mod->id]);
 		return View::make('courses.index')
 			->with('courses',$cs)
 			->with('title',$title);
