@@ -858,5 +858,28 @@ class TestsController extends \BaseController {
 			"array"=>$array,
 			"title"=>$title]);
 	}
+	
+	public function getHpbydepartment($letter)
+	{
+		$hp=Hp::where('letter', $letter)->first();
+		$courses=$hp->courses()
+			->with('dept')
+			->where('term_id', Session::get('term_id'))
+			->get();
+		$array=array();
+		foreach ($courses AS $course)
+		{
+			$key=$course->dept->shortname;
+			if (array_key_exists($key, $array))
+				$array[$key]+=$course->enrollment*$course->credits;
+			else
+				$array[$key]=$course->enrollment*$course->credits;
+		};
+		ksort($array);
+		$title="Department breakdown of enrollment for $letter";
+		Return View::make('tests.pie',[
+			"array"=>$array,
+			"title"=>$title]);
+	}
 
 }

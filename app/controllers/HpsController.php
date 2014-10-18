@@ -43,7 +43,10 @@ class HpsController extends BaseController {
 	{
 		$mod=Hp::findOrFail($id);
 		$cs=Helper::courselistwithmodel($mod);
-		$title="Hamline Plan {$mod->letter}";
+		$title="Hamline Plan {$mod->letter} ";
+		$title.= link_to_action('TestsController@getHpbydepartment',
+			'enrollment breakdown',
+			[$mod->letter]);
 		return View::make('courses.index')
 			->with('courses',$cs)
 			->with('title', $title);
