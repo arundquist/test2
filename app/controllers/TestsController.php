@@ -871,9 +871,9 @@ class TestsController extends \BaseController {
 		{
 			$key=$course->dept->shortname;
 			if (array_key_exists($key, $array))
-				$array[$key]+=$course->enrollment*$course->credits;
+				$array[$key]+=$course->enrollment*$course->credits/4;
 			else
-				$array[$key]=$course->enrollment*$course->credits;
+				$array[$key]=$course->enrollment*$course->credits/4;
 		};
 		ksort($array);
 		$title="Department breakdown of enrollment for $letter";
