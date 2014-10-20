@@ -138,7 +138,9 @@ class TestsController extends \BaseController {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
 		$content = curl_exec($ch);
-		$find=preg_match('%<OPTION VALUE="([0-9]+)">'.$fac.'%', $content, $match);
+		//dd($content);
+		$find=preg_match('%<option VALUE="([0-9]+)">'.$fac.'%', $content, $match);
+		//dd($find);
 		if ($find)
 			return $match[1];
 		else
@@ -164,7 +166,9 @@ class TestsController extends \BaseController {
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		$content = curl_exec($ch);
 		$string=$content;
+		//dd($string);
 		$completion=preg_match('%\('.$crn.'\)[^\(\)]+?(\([^\(\)]+?\))%',$content,$completematch);
+		//dd($completion);
 		if (!$completion)
 			return null;
 		$completeinfo=$completematch[1];
@@ -173,18 +177,18 @@ class TestsController extends \BaseController {
 			$start = 4;
 		else
 			$start=5;
-		$startstring='<TH CLASS="ddlabel" scope="row" >VALUE</TH>
-<TH CLASS="ddlabel" scope="row" colspan="4">.*?</TH>
-<TH CLASS="ddlabel" scope="row" >NUM</TH>';
-		$endstring='<TD CLASS="dddefault"><B>MAX:';
-		$qq=preg_match_all('%'.$startstring.'(.*?)(?=<TH)%s', $string, $qmatch);
+		$startstring='<th CLASS="ddlabel" scope="row" >VALUE</th>
+<th CLASS="ddlabel" scope="row" colspan="4">.*?</th>
+<th CLASS="ddlabel" scope="row" >NUM</th>';
+		$endstring='<td CLASS="dddefault"><B>MAX:';
+		$qq=preg_match_all('%'.$startstring.'(.*?)(?=<th)%s', $string, $qmatch);
 		$scores=array();
 		$comments=array();
 		foreach ($qmatch[1] AS $key=>$m)
 		{
-			$qs=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $m,$matches);
+			$qs=preg_match_all('%<td CLASS="dddefault">[0-9].*?<td CLASS="dddefault">\s*?([0-9]+)%s', $m,$matches);
 			$scores[$key]=$matches[1];
-			$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $m, $matches);
+			$cm=preg_match_all('%<td CLASS="dddefault"colspan="6">(.*?)</td>%s', $m, $matches);
 			if ($cm)
 			{
 				$comments[$key]=$matches[1];
@@ -212,7 +216,7 @@ class TestsController extends \BaseController {
 		$overallavg=array_sum($avgs)/10;
 		
 		// now to grab the overall comments
-		$oc=preg_match_all('%<TH CLASS="ddlabel" scope="row" colspan="6">Comments:</TH>.*?<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s',
+		$oc=preg_match_all('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>.*?<td CLASS="dddefault"colspan="6">(.*?)</td>%s',
 			$string,$ocmatch);
 		$overallcomments=array();
 		if ($oc)
