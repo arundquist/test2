@@ -678,6 +678,13 @@ EOD;
 			//$this->saveone($year,$season, $single);
 			$this->saveonemulttimes($year,$season, $single);
 		}; 
+		// check for updated at on today and delete others
+		if ($season!=11){
+			$year=$year-1;
+			};
+		$term=Term::where('ay','=',$year)
+				-> where('season','=',$season)->first();
+		$term->courses()->where('updated_at', '<', date('Y-m-d'))->delete();
 	}
 	
 	// function to take single class data and put in database
@@ -1054,7 +1061,7 @@ EOD;
 		$title="History for {$mod->shortname}";
 		$cs=$mod->courses()
     	    		->where("cancelled",0)->get();
-    	    	$cs->load('instructors', 'hps','room.building','dept','times', 'areas','term');
+    	    	$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
     	    	$roles = $cs->sortBy(function($course)
 			{
 				$sarray=["fall"=>".4",

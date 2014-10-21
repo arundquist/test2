@@ -267,8 +267,8 @@ function prof($inst) {
 		$all=file_get_contents($url, FILE_SKIP_EMPTY_LINES);
 		if (!strpos($all, "CANCELED"))
 		{
-			$f=preg_match("/(TABLE\s+CLASS=\"datadisplaytable\".*?<\/TABLE>)/sm",$all,$matches);
-			$g=preg_match_all("/<TD.*?><p.*?>(.*?)<\/p><\/TD>/m",$matches[1],$matches2);
+			$f=preg_match("/(table\s+CLASS=\"datadisplaytable\".*?<\/table>)/sm",$all,$matches);
+			$g=preg_match_all("/<td.*?><p.*?>(.*?)<\/p><\/td>/m",$matches[1],$matches2);
 			if (count($matches2[1])==6)
 			{
 				$asindex=4;
