@@ -149,3 +149,5 @@ Route::resource('buildings', 'BuildingsController');
 Route::resource('areas', 'AreasController');
 
 Route::controller('tests', 'TestsController');
+
+Route::controller('reports', 'ReportsController');
