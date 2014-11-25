@@ -91,7 +91,8 @@ class ReportsController extends \BaseController {
 		{
 			$inst=Instructor::findOrFail($iid);
 			//dd($inst->courses);
-			$all['fysem']+=$inst->courses()->where('dept_id', $fsemid)->count();
+			$all['fysem']+=$inst->courses()->whereIn('term_id', $term_ids)
+				->where('dept_id', $fsemid)->count();
 		};
 		
 		/*
