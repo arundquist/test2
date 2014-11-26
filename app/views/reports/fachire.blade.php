@@ -1,6 +1,12 @@
 @extends('layouts.main')
 
 @section('main')
+
+<div>
+This page should help you to fill out the chart required on the 
+request for new hire form. Select your department and the relevant
+academic years that you want data for.
+</div>
 <div class="row">
 
 {{Form::open(['method'=>'post', 'action'=>['ReportsController@postFachire']])}}
