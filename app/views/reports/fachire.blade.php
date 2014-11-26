@@ -3,9 +3,7 @@
 @section('main')
 
 <div>
-This page should help you to fill out the chart required on the 
-request for new hire form. Select your department and the relevant
-academic years that you want data for.
+This page will provide information to complete question #1 on the Full-Time Faculty Search Proposal form.  Select your department/program and the academic years for which you would like data, then click Submit.
 </div>
 <div class="row">
 
