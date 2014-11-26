@@ -3,7 +3,7 @@
 @section('main')
 
 <div>
-This page will provide information to complete question #1 on the Full-Time Faculty Search Proposal form.  Select your department/program and the academic years for which you would like data, then click Submit.
+This page will provide most of the information to complete question #1 on the Full-Time Faculty Search Proposal form.  Select your department/program and the academic years for which you would like data, then click Submit.
 </div>
 <div class="row">
 
