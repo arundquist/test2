@@ -72,7 +72,7 @@ class EvalsController extends \BaseController {
 			$content=Helper::evalselects(['term_code'=>$term_code,
 				'crev_code'=>$crevcode,
 				'rev'=>$rev]);
-			
+			//dd($content);
 			// the preg here grabs any crns that have at least 1 eval
 			
 			// first see if there's a select with multiple crns
@@ -92,6 +92,8 @@ class EvalsController extends \BaseController {
 				$string='%Course</th>
 <td CLASS="dddefault">(.*?\((\d{5})\).*?)</td>%s';
 				$crnsinglebool=preg_match($string, $content,$crnsinglematch);
+				if(!$crnsinglebool)
+					continue;
 				$crnmatches=["single",[$crnsinglematch[2]],[$crnsinglematch[1]]];
 			};
 			
