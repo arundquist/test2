@@ -102,7 +102,7 @@ class EvalsController extends \BaseController {
 			$count=0;
 			foreach ($crnmatches[1] AS $key=>$crn)
 			{
-				$count++;
+				
 				// here I make sure there's at least one person
 				// filling something out
 				$evalsbool=preg_match('&\([1-9]+.*?%\)&', $crnmatches[2][$key]);
@@ -117,7 +117,11 @@ class EvalsController extends \BaseController {
 <th CLASS="ddlabel" scope="row" colspan="4">(.*?)</th>
 <th CLASS="ddlabel" scope="row" >NUM</th>';
 				$qq=preg_match_all('%'.$startstring.'(.*?)(?=<th)%s', $content, $qmatch);
+				if (!$qq)
+					continue;
+				$count++;
 				$allquestions=array();
+				//dd($qmatch);
 				foreach ($qmatch[1] AS $key2=>$question)
 				{
 					$allquestions[$key2]=['question'=>$question,
@@ -160,8 +164,10 @@ class EvalsController extends \BaseController {
 			
 		};
 		//dd($everything);
+		//dd($count);
 		return View::make('evals.display',
-			['everything'=>$everything]);
+			['everything'=>$everything,
+			'count'=>$count]);
 	}
 		
 	

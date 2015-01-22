@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('main')
+@if ($count >0)
 
 <table class="table">
 <thead>
@@ -60,8 +61,7 @@
 		
 			
 
-
-
+@endif
 
 
 
