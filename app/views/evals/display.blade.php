@@ -19,12 +19,12 @@
 		
 		@foreach ($term["evals"] AS $ckey=>$course)
 			<tr>
-				<td>{{$term["term"]}}</td>
+				<td>{{Helper::fixtermstring($term["term"])}}</td>
 				<td><a href="#{{$tkey}}-{{$ckey}}">{{$course["title"]}}</a></td>
 				<td>{{$course["overallavg"]}}</td>
 				@foreach ($course["allquestions"] AS $qkey=>$question)
 					<td>{{Helper::sparkflex(array_column($question["details"], "votes"))}}
-					<br/><a href="#{{$tkey}}-{{$ckey}}-{{$qkey}}">{{$question['average']}}</a></td>
+					<br/><span title="{{$question['question']}}"><a href="#{{$tkey}}-{{$ckey}}-{{$qkey}}">{{$question['average']}}</a></span></td>
 					</td>
 				@endforeach
 			</tr>
@@ -36,7 +36,7 @@
 
 @foreach ($everything AS $tkey=>$term)
 	@foreach ($term["evals"] AS $ckey=>$course)
-		<h2><a name="{{$tkey}}-{{$ckey}}"></a>{{$term["term"]}}: {{$course["title"]}}</h2>
+		<h2><a name="{{$tkey}}-{{$ckey}}"></a>{{Helper::fixtermstring($term["term"])}}: {{$course["title"]}}</h2>
 		@foreach ($course["allquestions"] AS $qkey=>$question)
 			<a name="{{$tkey}}-{{$ckey}}-{{$qkey}}"></a>
 			<p>{{$question['question']}}</p>

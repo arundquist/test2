@@ -46,6 +46,31 @@ class Helper {
 		echo $ret;
     	}
     	
+    public static function sparkflex($vals)
+	{
+		
+		//$vals=[4,5,32,2,0,6,7];
+		$max=max($vals);
+		if ($max==0)
+			return;
+		$h=25;
+		$w=35;
+		$c=count($vals);
+		$d=$w/$c;
+		$ret= "<svg width='$w' height='$h'>";
+		$ret.= "<polyline points=\"0,$h ";
+		foreach ($vals AS $key=>$val)
+		{
+			$x=$key/$c*$w;
+			$y=($max-$val)*$h/$max;
+			$val=$val*10;
+			$x2=$x+$d;
+			$ret.= "$x,$y $x2,$y ";
+		};
+		$ret.= $w.','.$h.'" style="fill:red;stroke:red;stroke-width:1" /></svg>';
+		echo $ret;
+    	}
+    	
     public static function sparkimg($vals)
 	{
 		// this doesn't seem to be working 1/6/15
@@ -154,19 +179,46 @@ class Helper {
 		
 	}
 	
-	public static function extractevaldetails($string)
+	public static function extractquestiondetails($string)
 	{
-		$original='<td CLASS="dddefault">3</td>
-<td CLASS="dddefault"colspan="4">Moderately Disagree</td>
-<td CLASS="dddefault">    0</td>';
-		$s='%<td CLASS="dddefault">(\d+)</td>
-<td CLASS="dddefault"colspan="4">(.*?)</td>
-<td CLASS="dddefault">\s*?(\d+)</td>%s';
-		$s='%<td CLASS="dddefault">\s*?(\d+)</td>%s';
-		$s='%<td CLASS="dddefault">(\d+)</td>%s';
-		$dets=preg_match_all('%'.$original.'%s', $string, $matches);
-		dd($matches);
+		//dd($string);
+		$s='%<td CLASS="dddefault">(\d+)</td>\s<td CLASS="dddefault"colspan="4">(.*?)</td>\s<td CLASS="dddefault">\s*?(\d+)</td>%s';
+		$dets=preg_match_all($s, $string, $matches);
+		$qdetails=array();
 		
+		foreach ($matches[1] AS $key=>$value)
+		{
+			$qdetails[$key]=['text'=>$matches[2][$key],
+					'value'=>$value,
+					'votes'=>$matches[3][$key]];
+		};
+		
+		return $qdetails;
+		
+	}
+	
+	public static function extractquestioncomments($string)
+	{
+		$comments=array();
+		$cm=preg_match_all('%<td CLASS="dddefault"colspan="6">(.*?)</td>%s', $string, $cmatches);
+			if ($cm)
+			{
+				$comments=$cmatches[1];
+			} else {
+				$comments=array();
+			};
+		return $comments;
+	}
+	
+	public static function extractquestionavg($string)
+	{
+		$avgbool=preg_match('%<B>AVG:\s*?(\d*\.?\d*)</B>%s', $string, $avgmatch);
+		//dd($avgmatch);
+		if ($avgbool)
+			$avg=$avgmatch[1];
+		else
+			$avg=0;
+		return $avg;
 	}
 		
 }

@@ -220,5 +220,18 @@ class Helper {
 			$avg=0;
 		return $avg;
 	}
+	
+	public static function fixtermstring($string)
+	{
+		$sarray=["11"=>"fall",
+			"12"=>"winter",
+			"13"=>"spring",
+			"15"=>"summer"];
+		$season=substr($string,4,2);
+		$year=substr($string,0,4);
+		if ($season >11)
+			$year++;
+		return "$year $sarray[$season]";
+	}
 		
 }
