@@ -66,6 +66,7 @@ class EvalsController extends \BaseController {
 		$crevcode=Session::get('crev_code');
 		$rev=Input::get('rev');
 		$everything=array();
+		$count=0;
 		foreach (Input::get('terms') AS $term_code)
 		{
 			$content=Helper::evalselects(['term_code'=>$term_code,
@@ -99,7 +100,7 @@ class EvalsController extends \BaseController {
 			//$crnsarray=array_merge($crnsarray, $crnmatches[1]);
 			//dd($crnmatches);
 			$allforthisterm=array();
-			$count=0;
+			
 			foreach ($crnmatches[1] AS $key=>$crn)
 			{
 				
