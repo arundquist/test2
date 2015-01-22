@@ -1,0 +1,28 @@
+<?php
+
+class EvalsController extends \BaseController {
+
+	public function getIndex()
+	{
+		return View::make('evals.login');
+	}
+	
+	public function postLogin()
+	{
+		Helper::evallogin(Input::get('username'), Input::get('password'));
+		$selects=Helper::evalselects(array());
+		return View::make('evals.choose',
+			['selects'=>$selects]);
+	}
+	
+	public function postChoose()
+	{
+		$selects=Helper::evalselects(Input::all());
+		//dd($selects);
+		return View::make('evals.choose',
+			['selects'=>$selects]);
+	}
+	
+	
+
+}

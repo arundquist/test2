@@ -216,7 +216,10 @@ class TestsController extends \BaseController {
 		$overallavg=array_sum($avgs)/10;
 		
 		// now to grab the overall comments
-		$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>.*?<td CLASS="dddefault"colspan="6">(.*?)Comments made by the student in this section%s',
+		//$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>.*?<td CLASS="dddefault"colspan="6">(.*?)Comments made by the student in this section%s',
+		//	$string,$wholesectionmatch);
+		// the one commented out only works if there's at least one comment
+		$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>(.*?)Comments made by the student in this section%s',
 			$string,$wholesectionmatch);
 		$oc=preg_match_all('%<td CLASS="dddefault"colspan="6">(.*?)</td>%s',
 			$wholesectionmatch[1],$ocmatch);

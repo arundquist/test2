@@ -125,6 +125,7 @@ class TestsController extends \BaseController {
 	
 	public function verifyfac($fixedstring, $fac)
 	{
+		/* testing the eval way
 		$sesid=Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
 		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalView";
@@ -138,6 +139,9 @@ class TestsController extends \BaseController {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
 		$content = curl_exec($ch);
+		*/
+		$content=Helper::evalselects(['term_code'=>$fixedstring,
+					'crev_code'=>'CLACE']);
 		//dd($content);
 		$find=preg_match('%<option VALUE="([0-9]+)">'.$fac.'%', $content, $match);
 		//dd($find);
@@ -149,6 +153,7 @@ class TestsController extends \BaseController {
 	
 	public function crnevals($fixedstring, $crn, $rev)
 	{
+		/* testing new eval way
 		$sesid=Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
 		$poststring="term_code=$fixedstring&crev_code=CLACE&rev=$rev&crn=$crn";
@@ -161,10 +166,17 @@ class TestsController extends \BaseController {
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
-		curl_setopt($ch, CURLOPT_URL, $newurl);
+		//curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
+		//curl_setopt($ch, CURLOPT_URL, $newurl);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		$content = curl_exec($ch);
+		*/
+		
+		$content=Helper::evalselects(['term_code'=>$fixedstring,
+					'crev_code'=>'CLACE',
+					'rev'=>$rev,
+					'crn'=>$crn]);
+		
 		$string=$content;
 		//dd($string);
 		$completion=preg_match('%\('.$crn.'\)[^\(\)]+?(\([^\(\)]+?\))%',$content,$completematch);
@@ -228,35 +240,7 @@ class TestsController extends \BaseController {
 		$overallcomments=array();
 		if ($oc)
 			$overallcomments=$ocmatch[1];
-		/*		
-		$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
-		$scores=array_slice($matches[1],$start,70);
-		$betterarray=array();
-		for ($i=0; $i<10; $i++)
-		{
-			for ($j=0; $j<7; $j++)
-			{
-				$betterarray[$i][$j]=$scores[$i*7+$j];
-			};
-		};
-		$avgs=array();
-		foreach ($betterarray AS $key=>$row)
-		{
-			$avg=0;
-			foreach ($row AS $val=>$column)
-			{
-				$avg+=($val+1)*($column);
-			};
-			$avg=round($avg/array_sum($row),2);
-			$avgs[$key]=$avg;
-		};
 		
-		// grabbing comments. for now I'll just grab them all
-		
-		$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
-		//dd($matches);
-		$comments=$matches[1];
-		*/
 		$all=['scores'=>$scores,
 			'avgs'=>$avgs,
 			'comments'=>$comments,
@@ -692,7 +676,8 @@ class TestsController extends \BaseController {
 	public function postFpc()
 	{
 		ini_set('max_execution_time', 300);
-		$this->evallogin(Input::get('username'), Input::get('password'));
+		//$this->evallogin(Input::get('username'), Input::get('password'));
+		Helper::evallogin(Input::get('username'), Input::get('password'));
 		$facmod=Instructor::findOrFail(Input::get('instructor'));
 		$questions=['communication',
 				'organization',

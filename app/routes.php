@@ -150,4 +150,6 @@ Route::resource('areas', 'AreasController');
 
 Route::controller('tests', 'TestsController');
 
+Route::controller('evals', 'EvalsController');
+
 Route::controller('reports', 'ReportsController');
