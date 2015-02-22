@@ -66,12 +66,13 @@ class EvalsController extends \BaseController {
 		$crevcode=Session::get('crev_code');
 		$rev=Input::get('rev');
 		$everything=array();
+		$count=0;
 		foreach (Input::get('terms') AS $term_code)
 		{
 			$content=Helper::evalselects(['term_code'=>$term_code,
 				'crev_code'=>$crevcode,
 				'rev'=>$rev]);
-			
+			//dd($content);
 			// the preg here grabs any crns that have at least 1 eval
 			
 			// first see if there's a select with multiple crns
@@ -91,6 +92,8 @@ class EvalsController extends \BaseController {
 				$string='%Course</th>
 <td CLASS="dddefault">(.*?\((\d{5})\).*?)</td>%s';
 				$crnsinglebool=preg_match($string, $content,$crnsinglematch);
+				if(!$crnsinglebool)
+					continue;
 				$crnmatches=["single",[$crnsinglematch[2]],[$crnsinglematch[1]]];
 			};
 			
@@ -99,10 +102,10 @@ class EvalsController extends \BaseController {
 			//$crnsarray=array_merge($crnsarray, $crnmatches[1]);
 			//dd($crnmatches);
 			$allforthisterm=array();
-			$count=0;
+			
 			foreach ($crnmatches[1] AS $key=>$crn)
 			{
-				$count++;
+				
 				// here I make sure there's at least one person
 				// filling something out
 				$evalsbool=preg_match('&\([1-9]+.*?%\)&', $crnmatches[2][$key]);
@@ -117,7 +120,11 @@ class EvalsController extends \BaseController {
 <th CLASS="ddlabel" scope="row" colspan="4">(.*?)</th>
 <th CLASS="ddlabel" scope="row" >NUM</th>';
 				$qq=preg_match_all('%'.$startstring.'(.*?)(?=<th)%s', $content, $qmatch);
+				if (!$qq)
+					continue;
+				$count++;
 				$allquestions=array();
+				//dd($qmatch);
 				foreach ($qmatch[1] AS $key2=>$question)
 				{
 					$allquestions[$key2]=['question'=>$question,
@@ -160,8 +167,10 @@ class EvalsController extends \BaseController {
 			
 		};
 		//dd($everything);
+		//dd($count);
 		return View::make('evals.display',
-			['everything'=>$everything]);
+			['everything'=>$everything,
+			'count'=>$count]);
 	}
 		
 	
