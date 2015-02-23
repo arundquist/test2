@@ -155,6 +155,25 @@ class EvalsController extends \BaseController {
 							'average'=>Helper::extractquestionavg($qmatch[2][$key2])];
 				};
 				//dd($allquestions);
+				
+				// At this point all the numeric questions have been
+				// captured. For the grad programs, we need to grab
+				// anything else after that (typically questions with
+				// open answers). 
+				$startstring='<th class="ddlabel" scope="row" colspan="6">';
+				$qq=preg_match_all('%'.$startstring.'(.*?)(?=<th)%s', $content, $qmatch);
+				$justquestions=array();
+				if ($qq)
+				{
+					foreach ($qmatch[1] AS $key3=>$question)
+					{
+						$justquestions[$key3]=['question'=>$question,
+							'comments'=>Helper::extractquestioncomments($qmatch[2][$key3])];
+					};
+				};
+				
+				
+				
 				$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>(.*?)Comments made by the student in this section%s',
 					$content,$wholesectionmatch);
 				$oc=preg_match_all('%<td CLASS="dddefault"colspan="6">(.*?)</td>%s',
@@ -178,6 +197,7 @@ class EvalsController extends \BaseController {
 				$allforthisterm[$key]=['title'=>$crnmatches[2][$key],
 							'crn'=>$crn,
 							'allquestions'=>$allquestions,
+							'justquestions'=>$justquestions,
 							'overallcomments'=>$overallcomments,
 							'overallavg'=>$avg];
 			};

@@ -48,6 +48,17 @@
 			@endforeach
 			</ul>
 		@endforeach
+		<p>Other questions</p>
+		@foreach ($course["justquestions"] AS $qkey=>$question)
+			<p>{{$question['question']}}</p>
+			<ul class="list-group">
+			@foreach ($question['comments'] AS $comment)
+				<li class="list-group-item">
+					{{$comment}}
+				</li>
+			@endforeach
+			</ul>
+		@endforeach
 		<p>Overall comments:</p>
 		<ul class=class"list-group">
 		@foreach ($course["overallcomments"] AS $comment)
