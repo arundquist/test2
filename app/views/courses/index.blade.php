@@ -81,6 +81,7 @@
 @endforeach
 </tr>
 </table>
+{{link_to_action('TestsController@getModtimeplots', "time plots for this list", [Request::segment(1), Request::segment(2)])}}
 @stop
 
 

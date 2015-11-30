@@ -895,5 +895,19 @@ class TestsController extends \BaseController {
 		echo $img2;
 		echo $svg2;
 	}
+	
+	public function getAllclasses($term_id)
+	{
+		$cs=Course::where("term_id",'=',$term_id)
+    	    		->where("cancelled",0)->get();
+    	    	$cs->load('rooms.building','times');
+    	    	$all=array();
+    	    	foreach ($cs AS $c)
+    	    	{
+    	    		foreach ($c->times AS $time)
+    	    			$all[]=[$c->enrollment, $time->day,$time->beginning, $time->end];
+    	    	};
+    	    	return Response::json($all);
+    	}
 
 }

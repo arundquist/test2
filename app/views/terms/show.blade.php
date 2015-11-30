@@ -6,7 +6,8 @@
 </li>
 @endforeach
 </ul>
-{{link_to_action('TestsController@getAllclasses', "json data for this term", Session::get('term_id'))}}
+{{link_to_action('TestsController@getAllclasses', "json data for this term", Session::get('term_id'))}}</br>
+{{link_to_action('TestsController@getTermtimeplots', "time plots for this term", Session::get('term_id'))}}
 @stop
 
 

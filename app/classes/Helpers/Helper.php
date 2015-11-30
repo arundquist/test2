@@ -233,5 +233,61 @@ class Helper {
 			$year++;
 		return "$year $sarray[$season]";
 	}
+	
+	public static function maketimeplot($allsummed)
+    	{
+    		$colors=["Monday"=>'black', 
+    	    		"Tuesday"=>'red',
+    	    		"Wednesday"=>'blue',
+    	    		"Thursday"=>'green',
+    	    		"Friday"=>'orange'];
+    	    	echo '<svg height="300" width="1500">';
+    	    	$maxes=array();
+    	    	foreach ($allsummed AS $list)
+    	    		$maxes[]=max($list);
+    	    	$absmax=max($maxes);
+    	    	if ($absmax==0)
+    	    		dd("no one is enrolled (yet?)");
+    	    	$mult=275/$absmax;
+  
+  		foreach ($allsummed AS $daykey=>$day)
+  		{
+  			$m=max($day);
+  			$m=2000;
+  			$previous=275;
+  			echo '<polyline points="';
+  			foreach ($day AS $key=>$value)
+  			{
+  				$x=$key-480;
+  				$y=275-$value*$mult;
+  				echo "$x,$previous $x,$y ";
+  				$previous=$y;
+  			};
+  			echo '" style="fill:none;stroke:';
+  			echo $colors[$daykey];
+  			echo ';stroke-width:3" />' ;
+  			};
+  		for ($x = 8; $x <= 21; $x++) {
+  			$loc=($x-8)*60;
+  			$name=$x;
+  			if ($name>12)
+  				$name-=12;
+  			echo "<text x='$loc' y='300' fill='black'>$name</text>";
+  		}
+  		echo '</svg>';
+  	}
+  	
+  	public static function plotlegend()
+  	{
+  		$colors=["Monday"=>'black', 
+    	    		"Tuesday"=>'red',
+    	    		"Wednesday"=>'blue',
+    	    		"Thursday"=>'green',
+    	    		"Friday"=>'orange'];
+    	    	echo "<b>";
+    	    	foreach ($colors AS $day=>$color)
+    	    		echo "<span style='color:$color'>$day </span>";
+    	    	echo "</b>";
+    	}
 		
 }
