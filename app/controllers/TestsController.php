@@ -923,6 +923,8 @@ class TestsController extends \BaseController {
     	
     	public function getTermtimeplots($term_id)
     	{
+    		$term=Term::findOrFail($term_id);
+    		$title="{$term->season} {$term->ay}";
     		$cs=Course::where("term_id",'=',$term_id)
     	    		->where("cancelled",0)->get();
     	    	$cs->load('times');
@@ -964,7 +966,8 @@ class TestsController extends \BaseController {
     	    		"Thursday"=>$allsummed["Thursday"]];
     	    	Return View::make('times.timecharts',[
 			"MWF"=>$MWF,
-			"TR"=>$TR]);
+			"TR"=>$TR,
+			"title"=>$title]);
     	    	
     	}
     	
@@ -972,6 +975,40 @@ class TestsController extends \BaseController {
     	{
     		//$cs=Course::where("term_id",'=',$term_id)
     	    	//	->where("cancelled",0)->get();
+    	    	$term=Term::findOrFail(\Session::get('term_id'));
+    	    	switch ($model)
+		{
+		case "tests":
+			$title="{$term->ay} {$term->season} ";
+			$title.=Session::getId();
+			break;
+		case "depts":
+			$s=Dept::findOrFail($id);
+			$title="{$s->shortname} {$term->ay} {$term->season}";
+			break;
+		case "hps":
+			$s=Hp::findOrFail($id);
+			$title="HP {$s->letter} {$term->ay} {$term->season}";
+			break;
+		case "times":
+			$s=Time::findOrFail($id);
+			$title="{$t->beginning} {$term->ay} {$term->season}";
+			break;
+		case "rooms":
+			$s=Room::findOrFail($id);
+			$title="{$s->building->name} {$s->number} {$term->ay} {$term->season}";
+			break;
+		case "areas":
+			$s=Area::findOrFail($id);
+			$title="Area {$s->area} {$term->ay} {$term->season}";
+			break;
+		case "instructors":
+			$s=Instructor::findOrFail($id);
+			$title="{$s->name} {$term->ay} {$term->season}";
+			break;
+		default: return "oops";
+		};
+    	    	
     	    	$model=ucwords(substr($model,0,-1));
     	    	
     	    	$mod=$model::findOrFail($id);
@@ -1017,7 +1054,8 @@ class TestsController extends \BaseController {
     	    	
     	    	Return View::make('times.timecharts',[
 			"MWF"=>$MWF,
-			"TR"=>$TR]);
+			"TR"=>$TR,
+			"title"=>$title]);
     	    	
     	}
     	

@@ -1,7 +1,11 @@
 @extends('layouts.main')
 
 @section('main')
-{{Helper::maketimeplot($MWF)}}{{Helper::plotlegend()}}
+<h2>{{$title}}</h2>
+{{Helper::maketimeplot($MWF)}}
+</br>
+{{Helper::plotlegend()}}
+</br>
 
 {{Helper::maketimeplot($TR)}}
 @stop

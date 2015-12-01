@@ -241,7 +241,7 @@ class Helper {
     	    		"Wednesday"=>'blue',
     	    		"Thursday"=>'green',
     	    		"Friday"=>'orange'];
-    	    	echo '<svg height="300" width="1500">';
+    	    	echo '<svg height="300" width="900">';
     	    	$maxes=array();
     	    	foreach ($allsummed AS $list)
     	    		$maxes[]=max($list);
@@ -258,7 +258,7 @@ class Helper {
   			echo '<polyline points="';
   			foreach ($day AS $key=>$value)
   			{
-  				$x=$key-480;
+  				$x=$key-480+30;
   				$y=275-$value*$mult;
   				echo "$x,$previous $x,$y ";
   				$previous=$y;
@@ -268,12 +268,21 @@ class Helper {
   			echo ';stroke-width:3" />' ;
   			};
   		for ($x = 8; $x <= 21; $x++) {
-  			$loc=($x-8)*60;
+  			$loc=($x-8)*60+30;
   			$name=$x;
   			if ($name>12)
   				$name-=12;
   			echo "<text x='$loc' y='300' fill='black'>$name</text>";
   		}
+  		
+  		for ($y = 0; $y <= 20; $y++) {
+  			$loc=275-$y*100*$mult;
+  			$name=$y*100;
+  			
+  			echo "<text x='0' y='$loc' fill='black'>$name</text>";
+  		}
+  		echo "<text x='0' y='10' fill='black'>$absmax</text>";
+  		
   		echo '</svg>';
   	}
   	

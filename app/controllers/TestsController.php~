@@ -909,5 +909,117 @@ class TestsController extends \BaseController {
     	    	};
     	    	return Response::json($all);
     	}
-
+    	
+    	public function fixtime($timestring)
+    	{
+    		$match = preg_match('/(\d+):(\d+)(a|p)m/', $timestring, $matches);
+    		//dd($matches);
+    		if ($matches[3]=='p' && $matches[1]!=12)
+    			$val=($matches[1]+12)*60+$matches[2];
+    		else
+    			$val=$matches[1]*60+$matches[2];
+    		return($val);
+    	}
+    	
+    	public function getTermtimeplots($term_id)
+    	{
+    		$cs=Course::where("term_id",'=',$term_id)
+    	    		->where("cancelled",0)->get();
+    	    	$cs->load('times');
+    	    	$all=array();
+    	    	foreach ($cs AS $c)
+    	    	{
+    	    		foreach ($c->times AS $time)
+    	    		{
+    	    			$all[$time->day][]=[$this->fixtime($time->beginning), $c->enrollment];
+    	    			//$tmp=$c->enrollment;
+    	    			$all[$time->day][]=[$this->fixtime($time->end),-$c->enrollment];
+    	    		};
+    	    	};
+    	    	$summed=array();
+    	    	$allsummed=array();
+    	    	foreach ($all AS $key=>$day)
+    	    	{
+    	    		$summed=array();
+    	    		foreach ($day AS $value)
+    	    		{
+    	    			if(!isset($summed[$value[0]]))
+    	    				$summed[$value[0]]=0;
+    	    			$summed[$value[0]]+=$value[1];
+    	    		};
+    	    		ksort($summed);
+    	    		$tmp=0;
+    	    		$rollup=array();
+    	    		foreach ($summed AS $key2=>$value)
+    	    		{
+    	    			$tmp+=$value;
+    	    			$rollup[$key2]=$tmp;
+    	    		};
+    	    		$allsummed[$key]=$rollup;
+    	    	};
+    	    	$MWF=["Monday"=>$allsummed["Monday"],
+    	    		"Wednesday"=>$allsummed["Wednesday"],
+    	    		"Friday"=>$allsummed["Friday"]];
+    	    	$TR=["Tuesday"=>$allsummed["Tuesday"],
+    	    		"Thursday"=>$allsummed["Thursday"]];
+    	    	Return View::make('times.timecharts',[
+			"MWF"=>$MWF,
+			"TR"=>$TR]);
+    	    	
+    	}
+    	
+    	public function getModtimeplots($model, $id)
+    	{
+    		//$cs=Course::where("term_id",'=',$term_id)
+    	    	//	->where("cancelled",0)->get();
+    	    	$model=ucwords(substr($model,0,-1));
+    	    	
+    	    	$mod=$model::findOrFail($id);
+    	    	$cs=$mod->courses()->where("term_id",'=', Session::get('term_id'))
+    	    		->where("cancelled",0)->get();	
+    	    	$cs->load('times');
+    	    	$all=array();
+    	    	foreach ($cs AS $c)
+    	    	{
+    	    		foreach ($c->times AS $time)
+    	    		{
+    	    			$all[$time->day][]=[$this->fixtime($time->beginning), $c->enrollment];
+    	    			//$tmp=$c->enrollment;
+    	    			$all[$time->day][]=[$this->fixtime($time->end),-$c->enrollment];
+    	    		};
+    	    	};
+    	    	$summed=array();
+    	    	$allsummed=array();
+    	    	foreach ($all AS $key=>$day)
+    	    	{
+    	    		$summed=array();
+    	    		foreach ($day AS $value)
+    	    		{
+    	    			if(!isset($summed[$value[0]]))
+    	    				$summed[$value[0]]=0;
+    	    			$summed[$value[0]]+=$value[1];
+    	    		};
+    	    		ksort($summed);
+    	    		$tmp=0;
+    	    		$rollup=array();
+    	    		foreach ($summed AS $key2=>$value)
+    	    		{
+    	    			$tmp+=$value;
+    	    			$rollup[$key2]=$tmp;
+    	    		};
+    	    		$allsummed[$key]=$rollup;
+    	    	};
+    	    	$MWF=["Monday"=>$allsummed["Monday"],
+    	    		"Wednesday"=>$allsummed["Wednesday"],
+    	    		"Friday"=>$allsummed["Friday"]];
+    	    	$TR=["Tuesday"=>$allsummed["Tuesday"],
+    	    		"Thursday"=>$allsummed["Thursday"]];
+    	    	
+    	    	Return View::make('times.timecharts',[
+			"MWF"=>$MWF,
+			"TR"=>$TR]);
+    	    	
+    	}
+    	
+    	
 }
