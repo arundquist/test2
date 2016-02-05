@@ -122,7 +122,7 @@ class ReportsController extends \BaseController {
 	{
 		$depts=Dept::lists('shortname','id');
 		//dd($depts);
-		$ays=["13-14","12-13","11-12"];
+		$ays=["14-15","13-14","12-13",];
 		return View::make('reports.fachire', 
 			['depts'=> $depts,
 			'ays'=>$ays]);
