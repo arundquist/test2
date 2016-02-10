@@ -41,7 +41,7 @@
 @else
 	{{link_to_action('TestsController@getAddclass', $course->title, [$course->id])}} 
 @endif
-{{link_to_action('TestsController@getPiperline', 'evals', [$course->id])}}</td>
+</td>
 <td>{{$course->credits}}</td>
 <td>{{HTML::linkRoute('enrollment', "{$course->enrollment} of {$course->enrollmentmax}", array($course->dept->shortname,$course->number))}}</br>
 {{HTML::linkAction('DataController@updatebyid',"{$course->updated_at->diffForHumans()}", $course->id)}}
