@@ -48,6 +48,10 @@ class DeptsController extends BaseController {
 		$title.=link_to_action('TestsController@getPietest', 
 				'enrollment breakdown',
 				[$mod->id]);
+		$title.=' ';
+		$title.=link_to_action('TestsController@getPietestcaps', 
+				'enrollment breakdown based on caps',
+				[$mod->id]);
 		return View::make('courses.index')
 			->with('courses',$cs)
 			->with('title',$title);
