@@ -855,6 +855,34 @@ class TestsController extends \BaseController {
 			"title"=>$title]);
 	}
 	
+	public function getPietestcaps($dept_id)
+	{
+		$array=["hi"=>2,
+			"there"	=>	3,
+			"sjdklfj"=>	4];
+		$dept=Dept::findOrFail($dept_id);
+		$courses=$dept->courses()
+			->with('instructors')
+			->where('term_id', Session::get('term_id'))
+			->get();
+		$array=array();
+		$values=array();
+		foreach ($courses AS $course)
+		{
+			$facname=$course->instructors()->first()->name;
+			if (array_key_exists($facname, $values))
+				$values[$facname]+=$course->enrollmentmax;
+			else
+				$values[$facname]=$course->enrollmentmax;
+		};
+		$array=$values;
+		ksort($array);
+		$title="Faculty student load for {$dept->shortname}";
+		Return View::make('tests.pie',[
+			"array"=>$array,
+			"title"=>$title]);
+	}
+	
 	public function getHpbydepartment($letter)
 	{
 		$hp=Hp::where('letter', $letter)->first();
