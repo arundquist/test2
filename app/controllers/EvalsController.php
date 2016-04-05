@@ -131,13 +131,19 @@ class EvalsController extends \BaseController {
 				// here I make sure there's at least one person
 				// filling something out
 				$evalsbool=preg_match('&\([1-9]+.*?%\)&', $crnmatches[2][$key]);
-				if (!$evalsbool)
+				$evalsbool=preg_match('&= 0%&', $crnmatches[2][$key]);
+				//dd($evalsbool);
+				if ($evalsbool)
 					continue;
 				$content=Helper::evalselects(['term_code'=>$term_code,
 						'crev_code'=>$crevcode,
 						'rev'=>$rev,
 						'crn'=>$crn]);
 				//dd($content);
+				$restrictions=strpos($content,'Restrictions prohibit viewing this evaluation.');
+				//dd($restrictions);
+				if ($restrictions)
+					continue;
 				$startstring='<th CLASS="ddlabel" scope="row" >VALUE</th>
 <th CLASS="ddlabel" scope="row" colspan="4">(.*?)</th>
 <th CLASS="ddlabel" scope="row" >NUM</th>';
@@ -201,8 +207,8 @@ class EvalsController extends \BaseController {
 							'overallcomments'=>$overallcomments,
 							'overallavg'=>$avg];
 			};
-			
-			
+			//dd('made it here');
+			//dd($allforthisterm);
 			
 			$everything[]=['term'=>$term_code,
 				'evals'=>$allforthisterm,];
@@ -210,9 +216,22 @@ class EvalsController extends \BaseController {
 		};
 		//dd($everything);
 		//dd($count);
+		//dd('made it here');
+		
+		// here I'm making sure that the questions get
+		// displayed from a set of data that actually
+		// had some responses
+		$evalkey=array();
+		foreach ($everything AS $every)
+		{
+			$evalkey=array_merge($evalkey, array_keys($every["evals"]));
+		};
+		//dd($evalkey);
+		$questionkey=min($evalkey);
 		return View::make('evals.display',
 			['everything'=>$everything,
-			'count'=>$count]);
+			'count'=>$count,
+			'questionkey'=>$questionkey]);
 	}
 		
 	

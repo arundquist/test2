@@ -38,24 +38,46 @@ class EvalsController extends \BaseController {
 		$crevhidden=preg_match('%<input type="hidden" name="crev_code" value="([^"]+?)" />%s', $selects, $crevmatch);
 		Session::put('crev_code', $crevmatch[1]);
 		
-		return Redirect::action('EvalsController@getRev');
+		return Redirect::action('EvalsController@getTerms');
 	}
 	
 	public function postCrev()
 	{
 		Session::put('crev_code', Input::get('crev_code'));
-		return Redirect::action('EvalsController@getRev');
+		return Redirect::action('EvalsController@getTerms');
+	}
+	
+	public function getTerms()
+	{
+		$terms=Session::get('terms');
+		return View::make('evals.terms');
+	}
+	
+	public function postTerms()
+	{
+		// here we grab all the faculty in those 
+		// terms and get it ready for the Rev stuff
+		$nameslist=array();
+		foreach (Input::get('terms') AS $term_id)
+		{
+			$content=Helper::evalselects(['term_code'=>$term_id, 'crev_code'=>Session::get('crev_code')]);
+			$nameselect=preg_match('%<select name="rev".*?>(.*?)</select>%s',$content,$selectmatch);
+			$names=preg_match_all('%<option VALUE="([0-9]+)">(.*?)</option>%s', $selectmatch[1], $namesmatch);
+			foreach ($namesmatch[1] AS $key=>$value)
+			{
+				$nameslist=array_add($nameslist, $value, $namesmatch[2][$key]);
+			};
+	
+		};
+		Session::put('names', $nameslist);
+		Session::put('evalterms', Input::get('terms'));
+		return Redirect::action('EvalsController@getRev');	
 	}
 	
 	public function getRev()
 	{
-		$content=Helper::evalselects(['term_code'=>Session::get('selectedterm'),
-						'crev_code'=>Session::get('crev_code')]);
-		$revselect=preg_match('%<select name="rev".*?>(.*?</select>)%s', $content,$revmatch);
-		$nameselect= "<select name='rev'>$revmatch[1]";
-		// ok now I've got the names and I can grab the terms from the session
-		return View::make('evals.rev',
-			['revselect'=>$nameselect]);
+		
+		return View::make('evals.rev');
 	}
 	
 	public function postRev()
@@ -64,10 +86,10 @@ class EvalsController extends \BaseController {
 		//print_r(Input::all());
 		$crnsarray=array();
 		$crevcode=Session::get('crev_code');
-		$rev=Input::get('rev');
+		$rev=Input::get('name');
 		$everything=array();
 		$count=0;
-		foreach (Input::get('terms') AS $term_code)
+		foreach (Session::get('evalterms') AS $term_code)
 		{
 			$content=Helper::evalselects(['term_code'=>$term_code,
 				'crev_code'=>$crevcode,
@@ -133,6 +155,25 @@ class EvalsController extends \BaseController {
 							'average'=>Helper::extractquestionavg($qmatch[2][$key2])];
 				};
 				//dd($allquestions);
+				
+				// At this point all the numeric questions have been
+				// captured. For the grad programs, we need to grab
+				// anything else after that (typically questions with
+				// open answers). 
+				$startstring='<th class="ddlabel" scope="row" colspan="6">';
+				$qq=preg_match_all('%'.$startstring.'(.*?)(?=<th)%s', $content, $qmatch);
+				$justquestions=array();
+				if ($qq)
+				{
+					foreach ($qmatch[1] AS $key3=>$question)
+					{
+						$justquestions[$key3]=['question'=>$question,
+							'comments'=>Helper::extractquestioncomments($qmatch[2][$key3])];
+					};
+				};
+				
+				
+				
 				$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>(.*?)Comments made by the student in this section%s',
 					$content,$wholesectionmatch);
 				$oc=preg_match_all('%<td CLASS="dddefault"colspan="6">(.*?)</td>%s',
@@ -156,6 +197,7 @@ class EvalsController extends \BaseController {
 				$allforthisterm[$key]=['title'=>$crnmatches[2][$key],
 							'crn'=>$crn,
 							'allquestions'=>$allquestions,
+							'justquestions'=>$justquestions,
 							'overallcomments'=>$overallcomments,
 							'overallavg'=>$avg];
 			};

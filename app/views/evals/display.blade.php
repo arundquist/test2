@@ -8,11 +8,13 @@
 	<tr>
 		<th>term</th>
 		<th>course</th>
+		
 		<th>overall average</th>
-		@foreach (array_column($everything[0]["evals"][0]["allquestions"],"question") AS $q)
+		@foreach (array_column($everything[0]["evals"][$questionkey]["allquestions"],"question") AS $q)
 			<th>{{$q}}</th>
 		@endforeach
 	</tr>
+	
 </thead>
 <tbody>
 	@foreach ($everything AS $tkey=>$term)
@@ -68,6 +70,7 @@
 		@endforeach
 		</ul>
 	@endforeach
+	
 @endforeach
 		
 			
