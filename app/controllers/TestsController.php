@@ -13,6 +13,7 @@ class TestsController extends \BaseController {
 	public function getHeatmap()
 	{
 		$termid=\Session::get('term_id');
+		$term=Term::findOrFail($termid);
 		$times=DB::select("SELECT concat(t.day,': ', t.beginning,'-',t.end) AS ft, COUNT(c.id) as course_count, SUM(c.enrollment) AS totalenrollment
 											FROM times t
 											LEFT JOIN  course_time ct ON t.id = ct.time_id
@@ -20,8 +21,9 @@ class TestsController extends \BaseController {
 											GROUP BY ft
 											ORDER BY course_count DESC");
 	//	dd($times);
-		return View::make('times.heatmap')
-			->with('times', $times);
+		return View::make('times.heatmap',
+			['times'=> $times,
+		'term'=>$term]);
 	}
 
 	public function getSeats($model,$term_id)

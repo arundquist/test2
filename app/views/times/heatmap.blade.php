@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('main')
+<h1>
+  Heatmap for {{$term->season}} {{$term->ay}}
+</h1>
 <table class='table table-bordered'>
     <tr>
       <th>Time</th>
