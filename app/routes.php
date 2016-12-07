@@ -26,6 +26,7 @@ Route::when('instructors/*', 'termwithredirect');
 Route::when('rooms/*', 'termwithredirect');
 Route::when('buildings/*', 'termwithredirect');
 Route::when('times/*', 'termwithredirect');
+Route::when('tests/heatmap', 'termwithredirect');
 
 
 Route::get('crndetails/{crn}','DataController@crndetails');
