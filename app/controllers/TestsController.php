@@ -9,7 +9,20 @@ class TestsController extends \BaseController {
 			->first();
 		dd($course);
 	}
-	
+
+	public function getHeatmap()
+	{
+		$times=DB::select("SELECT concat(t.day,': ', t.beginning,'-',t.end) AS ft, COUNT(c.id) as course_count, SUM(c.enrollment) AS totalenrollment
+											FROM times t
+											LEFT JOIN  course_time ct ON t.id = ct.time_id
+											LEFT JOIN courses c ON c.id = ct.course_id
+											GROUP BY ft
+											ORDER BY course_count DESC");
+	//	dd($times);
+		return View::make('times.heatmap')
+			->with('times', $times);
+	}
+
 	public function getSeats($model,$term_id)
 	{
 		$mods=$model::mysort()->get();
@@ -37,7 +50,7 @@ class TestsController extends \BaseController {
 		};
 		echo "</table>";
 	}
-	
+
 	public function getDeptseats($deptstring)
 	{
 		$dept=Dept::where('shortname',strtoupper($deptstring))->first();
@@ -48,7 +61,7 @@ class TestsController extends \BaseController {
 			foreach ($c->instructors AS $inst)
 			{
 				$facids["{$inst->name}"][]=$c->enrollment;
-				
+
 			};
 		};
 		ksort($facids);
@@ -59,70 +72,70 @@ class TestsController extends \BaseController {
 			echo implode("+",$value);
 			echo "= $sum<br/>";
 		}
-		
-		
+
+
 	}
-	
+
 	public function getPiperline($course_id)
 	{
 		return View::make('tests.piperline',
 			['course_id'=>$course_id,
 			'path'=>'Piperline']);
 	}
-	
+
 	public function evallogin($user,$pass)
 	{
 		$sesid=Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
-		
-		
-		
+
+
+
 		$username=$user;
 		$password=$pass;
 		$url="https://piperline.hamline.edu/pls/prod/twbkwbis.P_ValLogin";
-		
-		
+
+
 		//$username = 'myuser';
 		//$password = 'mypass';
 		$loginUrl = $url;
-		 
+
 		//init curl
 		$ch = curl_init();
-		 
+
 		//Set the URL to work with
 		curl_setopt($ch, CURLOPT_URL, $loginUrl);
-		
+
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-		 
+
+
 		// ENABLE HTTP POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		 
+
 		//Set the post parameters
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
-		 
+
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 		//curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
 		// curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-		
+
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
-		
-		 
+
+
 		//Setting CURLOPT_RETURNTRANSFER variable to 1 will force cURL
 		//not to print out the results of its query.
 		//Instead, it will return the results as a string return value
 		//from curl_exec() instead of the usual true/false.
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		 
+
 		//execute the request (the login)
 		$store = curl_exec($ch);
 		$store2=curl_exec($ch);
 		//curl_close($ch);
 	}
-	
+
 	public function verifyfac($fixedstring, $fac)
 	{
 		/* testing the eval way
@@ -150,7 +163,7 @@ class TestsController extends \BaseController {
 		else
 			return false;
 	}
-	
+
 	public function crnevals($fixedstring, $crn, $rev)
 	{
 		/* testing new eval way
@@ -171,12 +184,12 @@ class TestsController extends \BaseController {
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
 		$content = curl_exec($ch);
 		*/
-		
+
 		$content=Helper::evalselects(['term_code'=>$fixedstring,
 					'crev_code'=>'CLACE',
 					'rev'=>$rev,
 					'crn'=>$crn]);
-		
+
 		$string=$content;
 		//dd($string);
 		$completion=preg_match('%\('.$crn.'\)[^\(\)]+?(\([^\(\)]+?\))%',$content,$completematch);
@@ -220,13 +233,13 @@ class TestsController extends \BaseController {
 			{
 				$avg+=($val+1)*($column);
 			};
-			if ($avg != 0)	
+			if ($avg != 0)
 				$avg=round($avg/array_sum($row),2);
 			$avgs[$key]=$avg;
 		};
 		//dd($avgs);
 		$overallavg=array_sum($avgs)/10;
-		
+
 		// now to grab the overall comments
 		//$wholesection=preg_match('%<th CLASS="ddlabel" scope="row" colspan="6">Comments:</th>.*?<td CLASS="dddefault"colspan="6">(.*?)Comments made by the student in this section%s',
 		//	$string,$wholesectionmatch);
@@ -240,7 +253,7 @@ class TestsController extends \BaseController {
 		$overallcomments=array();
 		if ($oc)
 			$overallcomments=$ocmatch[1];
-		
+
 		$all=['scores'=>$scores,
 			'avgs'=>$avgs,
 			'comments'=>$comments,
@@ -249,14 +262,14 @@ class TestsController extends \BaseController {
 			'overallavg'=>$overallavg];
 		return $all;
 	}
-	
+
 	public function postPiperline($course_id)
 	{
 		$sesid=Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
 		$course=Course::findOrFail($course_id);
 		$fac=$course->instructors->first()->name;
-		
+
 		$year=$course->term->ay;
 		$season=$course->term->season;
 		$sarray=["fall"=>"11",
@@ -269,69 +282,69 @@ class TestsController extends \BaseController {
 			};
 		$fixedstring=$year.$season;
 		$crn=$course->crn;
-		
-		
+
+
 		$username=Input::get('username');
 		$password=Input::get('password');
 		$url="https://piperline.hamline.edu/pls/prod/twbkwbis.P_ValLogin";
-		
-		
+
+
 		//$username = 'myuser';
 		//$password = 'mypass';
 		$loginUrl = $url;
-		 
+
 		//init curl
 		$ch = curl_init();
-		 
+
 		//Set the URL to work with
 		curl_setopt($ch, CURLOPT_URL, $loginUrl);
-		
+
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-		 
+
+
 		// ENABLE HTTP POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		 
+
 		//Set the post parameters
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
-		 
+
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 		//curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
 		// curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-		
+
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
-		
-		 
+
+
 		//Setting CURLOPT_RETURNTRANSFER variable to 1 will force cURL
 		//not to print out the results of its query.
 		//Instead, it will return the results as a string return value
 		//from curl_exec() instead of the usual true/false.
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		 
+
 		//execute the request (the login)
 		$store = curl_exec($ch);
 		$store2 =curl_exec($ch);
-		
+
 		$curl_info = curl_getinfo($ch);
 		//dd($curl_info);
 		//dd('stopped after login');
-		
+
 		//var_dump($curl_info);
-		 
+
 		//the login is now done and you can continue to get the
 		//protected content.
-		
-		 
+
+
 		//set the URL to the protected file
 		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalSummary";
 		$poststring='term_code=201313&crev_code=CLACE&rev=626649&crn=38259';
 		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalView";
-		
+
 		// I want to see what I get if I don't give rev and crn
-		
+
 		//$poststring="term_code=$fixedstring&crev_code=CLACE&rev=626649&crn=$crn";
 		$poststring="term_code=$fixedstring&crev_code=CLACE";
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
@@ -354,7 +367,7 @@ class TestsController extends \BaseController {
 		//var_dump($content);
 		$string=$content;
 		//dd(curl_getinfo($ch));
-		
+
 		$questions=['communication',
 			'organization',
 			'environment',
@@ -392,9 +405,9 @@ class TestsController extends \BaseController {
 			$avg=round($avg/array_sum($row),2);
 			$avgs[$key]=$avg;
 		};
-		
+
 		// grabbing comments. for now I'll just grab them all
-		
+
 		$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
 		//dd($matches);
 		return View::make('tests.evaluation',
@@ -403,21 +416,21 @@ class TestsController extends \BaseController {
 			'avgs'=>$avgs,
 			'course'=>$course,
 			'comments'=>$matches[1]]);
-		
+
 	}
-	
+
 	public function getPiperlineall($course_id)
 	{
 		return View::make('tests.piperline',
 			['course_id'=>$course_id,
 			'path'=>"Piperlineall"]);
 	}
-	
+
 	public function getFilecreate()
 	{
 		$sesid=Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
-		if(!file_exists($cookieFile)) 
+		if(!file_exists($cookieFile))
 		{
 		    //dd($cookieFile);
 		    $fh = fopen($cookieFile, "w");
@@ -427,16 +440,16 @@ class TestsController extends \BaseController {
 		};
 		echo "didn't do it";
 	}
-	
+
 	public function postPiperlineall($instructor_id)
 	{
 		$facmodel=Instructor::findOrFail($instructor_id);
 		//$course=Course::findOrFail($course_id);
 		//$facmodel=$course->instructors->first();
 		$sesid=Session::GetId();
-		
+
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
-		/* if(!file_exists($cookieFile)) 
+		/* if(!file_exists($cookieFile))
 		{
 		    //dd($cookieFile);
 			$fh = fopen($cookieFile, "w");
@@ -445,12 +458,12 @@ class TestsController extends \BaseController {
 		}; */
 		$cs=Helper::courselistwithmodel($facmodel);
 		$course=$cs->first();
-		
+
 		$classnames=$cs->lists('title','crn');
-		
-		
+
+
 		$fac=$course->instructors->first()->name;
-		
+
 		$year=$course->term->ay;
 		$season=$course->term->season;
 		$sarray=["fall"=>"11",
@@ -463,92 +476,92 @@ class TestsController extends \BaseController {
 			};
 		$fixedstring=$year.$season;
 		$crn=$course->crn;
-		
-		
+
+
 		$username=Input::get('username');
 		$password=Input::get('password');
 		$url="https://piperline.hamline.edu/pls/prod/twbkwbis.P_ValLogin";
-		
-		
+
+
 		//$username = 'myuser';
 		//$password = 'mypass';
 		$loginUrl = $url;
-		 
+
 		//init curl
 		$ch = curl_init();
-		 
+
 		//Set the URL to work with
 		curl_setopt($ch, CURLOPT_URL, $loginUrl);
-		
+
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-		 
+
+
 		// ENABLE HTTP POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		 
+
 		//Set the post parameters
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
-		 
+
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
 		 curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-		
+
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
-		
-		 
+
+
 		//Setting CURLOPT_RETURNTRANSFER variable to 1 will force cURL
 		//not to print out the results of its query.
 		//Instead, it will return the results as a string return value
 		//from curl_exec() instead of the usual true/false.
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		 
+
 		//execute the request (the login)
 		$store = curl_exec($ch);
 		$store2 = curl_exec($ch);
 		$poststring="term_code=$fixedstring&crev_code=CLACE";
-		
+
 		$curl_info = curl_getinfo($ch);
 		//curl_close($ch);
 		//sleep(2);
 		//dd($curl_info);
-		
+
 		//var_dump($curl_info);
-		 
+
 		//the login is now done and you can continue to get the
 		//protected content.
-		 
+
 		//set the URL to the protected file
-		
+
 		$newurl="https://piperline.hamline.edu/pls/prod/hwskheva.P_EvalView";
-		
+
 		// I want to see what I get if I don't give rev and crn
-		
+
 		//$poststring="term_code=$fixedstring&crev_code=CLACE&rev=626649&crn=$crn";
 		$poststring="term_code=$fixedstring&crev_code=CLACE";
 		$ch = curl_init();
-		 
+
 		//Set the URL to work with
 		//curl_setopt($ch, CURLOPT_URL, $loginUrl);
-		
+
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		
-		 
+
+
 		// ENABLE HTTP POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		 
+
 		//Set the post parameters
 		//curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
-		 
+
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
 		 //curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-		
+
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
-		
-		
+
+
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $poststring);
 		curl_setopt($ch, CURLOPT_URL, $newurl);
 		//curl_setopt($ch, CURLOPT_POST, 0);
@@ -591,7 +604,7 @@ class TestsController extends \BaseController {
 			if (!$completion)
 				continue;
 			$completeinfo[$crn]=$completematch[1];
-			
+
 			//$p=preg_match_all('%<TD CLASS="dddefault">[0-9].*?<TD CLASS="dddefault">\s*?([0-9]+)%s', $string,$matches);
 			//$scores[$crn]=array_slice($matches[1],-70,70);
 			$xlst=preg_match('%<TD CLASS="dddefault">XLST%',$string);
@@ -620,9 +633,9 @@ class TestsController extends \BaseController {
 				$avg=round($avg/array_sum($row),2);
 				$avgs[$crn][$key]=$avg;
 			};
-			
+
 			// grabbing comments. for now I'll just grab them all
-			
+
 			$cm=preg_match_all('%<TD CLASS="dddefault"colspan="6">(.*?)</TD>%s', $string, $matches);
 			//dd($matches);
 			$comments[$crn]=$matches[1];
@@ -637,9 +650,9 @@ class TestsController extends \BaseController {
 			'cs'=>$cs,
 			'comments'=>$comments,
 			'completeinfo'=>$completeinfo]);
-		
+
 	}
-	
+
 	public function getHps($dept_name)
 	{
 		//$dept=Dept::findOrFail($dept_id);
@@ -654,14 +667,14 @@ class TestsController extends \BaseController {
 				->where('term_id', Session::get('term_id'))
 				->where('dept_id', $dept->id)
 				->get();
-			
+
 		};
 		return View::make('tests.hps',
 			['list'=>$list,
 			'term'=>$term,
 			'dept'=>$dept]);
 	}
-	
+
 	public function getFpc()
 	{
 		$instructors=Instructor::orderBy('name')->get();
@@ -672,7 +685,7 @@ class TestsController extends \BaseController {
 			['instructors'=>$instructors,
 			'terms'=>$terms]);
 	}
-	
+
 	public function postFpc()
 	{
 		ini_set('max_execution_time', 300);
@@ -742,10 +755,10 @@ class TestsController extends \BaseController {
 			'wholeavg'=>$wholeavg,
 			'totalvotes'=>$wholeden]);
 	}
-	
+
 	public function spark($vals)
 	{
-		
+
 		//$vals=[4,5,32,2,0,6,7];
 		$max=max($vals);
 		$h=25;
@@ -764,32 +777,32 @@ class TestsController extends \BaseController {
 		$ret.= $w.','.$h.'" style="fill:red;stroke:red;stroke-width:2" /></svg>';
 		echo $ret;
     	}
-    	
+
     	public function getTestspark()
     	{
     		return Helper::spark([34,23,54,32,19,24,40]);
     	}
-    	
+
     	public function getAddclass($id)
     	{
     		$class=Course::findOrFail($id);
     		Session::push('user.classes', $id);
     		Return Redirect::back();
     	}
-    	
+
     	public function getDeleteclass($id)
     	{
     		$class=Course::findOrFail($id);
     		Session::put('user.classes', array_diff(Session::get('user.classes'), [$id]));
     		Return Redirect::back();
     	}
-    	
+
     	public function getClearclasses()
     	{
     		Session::forget('user.classes');
     		Return Redirect::to('/');
     	}
-    	
+
     	public function getShowmine()
     	{
     		$ids=array_unique(Session::get('user.classes'));
@@ -802,12 +815,12 @@ class TestsController extends \BaseController {
 			->with('courses',$cs)
 			->with('title',$title);
 	}
-	
+
 	public function getCheckclasses()
 	{
 		return dd(Session::get('user.classes'));
 	}
-	
+
 	public function getHphistory($letter)
 	{
 		$terms=Term::orderBy('ay','DESC')
@@ -823,10 +836,10 @@ class TestsController extends \BaseController {
 			echo "<li>{$term->ay} {$term->season}: $courses";
 		};
 		echo "</li>";
-		
-			
+
+
 	}
-	
+
 	public function getPietest($dept_id)
 	{
 		$array=["hi"=>2,
@@ -854,7 +867,7 @@ class TestsController extends \BaseController {
 			"array"=>$array,
 			"title"=>$title]);
 	}
-	
+
 	public function getPietestcaps($dept_id)
 	{
 		$array=["hi"=>2,
@@ -882,7 +895,7 @@ class TestsController extends \BaseController {
 			"array"=>$array,
 			"title"=>$title]);
 	}
-	
+
 	public function getHpbydepartment($letter)
 	{
 		$hp=Hp::where('letter', $letter)->first();
@@ -905,7 +918,7 @@ class TestsController extends \BaseController {
 			"array"=>$array,
 			"title"=>$title]);
 	}
-	
+
 	public function getSvg()
 	{
 		$svg="<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='35' height='25'><polyline points='0,25 0,18.75 5,18.75 5,12.5 10,12.5 10,6.25 15,6.25 15,18.75 20,18.75 20,6.25 25,6.25 25,12.5 30,12.5 30,0 35,0 35,25' style='fill:red;stroke:red;stroke-width:1' /></svg>";
@@ -915,15 +928,15 @@ class TestsController extends \BaseController {
 		$b64svg=base64_encode($svg2);
 		$u=urlencode($svg);
 		echo "hi there";
-		$img1="<img width='100' height='100' src='data:image/svg+xml;foo=bar,$u'/>";   
+		$img1="<img width='100' height='100' src='data:image/svg+xml;foo=bar,$u'/>";
 		$img2="<img width='200' height='200' src='data:image/svg+xml;foo=bar,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%3E%0A%20%20%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2225%22%20stroke%3D%22black%22%20stroke-width%3D%221%22%20fill%3D%22green%22%2F%3E%0A%3C%2Fsvg%3E%0A' />";
 
-		
+
 		echo $img1;
 		echo $img2;
 		echo $svg2;
 	}
-	
+
 	public function getAllclasses($term_id)
 	{
 		$cs=Course::where("term_id",'=',$term_id)
@@ -937,7 +950,7 @@ class TestsController extends \BaseController {
     	    	};
     	    	return Response::json($all);
     	}
-    	
+
     	public function fixtime($timestring)
     	{
     		$match = preg_match('/(\d+):(\d+)(a|p)m/', $timestring, $matches);
@@ -948,7 +961,7 @@ class TestsController extends \BaseController {
     			$val=$matches[1]*60+$matches[2];
     		return($val);
     	}
-    	
+
     	public function getTermtimeplots($term_id)
     	{
     		$term=Term::findOrFail($term_id);
@@ -996,9 +1009,9 @@ class TestsController extends \BaseController {
 			"MWF"=>$MWF,
 			"TR"=>$TR,
 			"title"=>$title]);
-    	    	
+
     	}
-    	
+
     	public function getModtimeplots($model, $id)
     	{
     		//$cs=Course::where("term_id",'=',$term_id)
@@ -1036,12 +1049,12 @@ class TestsController extends \BaseController {
 			break;
 		default: return "oops";
 		};
-    	    	
+
     	    	$model=ucwords(substr($model,0,-1));
-    	    	
+
     	    	$mod=$model::findOrFail($id);
     	    	$cs=$mod->courses()->where("term_id",'=', Session::get('term_id'))
-    	    		->where("cancelled",0)->get();	
+    	    		->where("cancelled",0)->get();
     	    	$cs->load('times');
     	    	$all=array();
     	    	foreach ($cs AS $c)
@@ -1079,13 +1092,13 @@ class TestsController extends \BaseController {
     	    		"Friday"=>$allsummed["Friday"]];
     	    	$TR=["Tuesday"=>$allsummed["Tuesday"],
     	    		"Thursday"=>$allsummed["Thursday"]];
-    	    	
+
     	    	Return View::make('times.timecharts',[
 			"MWF"=>$MWF,
 			"TR"=>$TR,
 			"title"=>$title]);
-    	    	
+
     	}
-    	
-    	
+
+
 }

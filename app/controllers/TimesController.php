@@ -14,6 +14,8 @@ class TimesController extends BaseController {
 			->with('times', $times);
 	}
 
+
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -49,7 +51,7 @@ class TimesController extends BaseController {
 			->with('courses',$cs)
 			->with('title',$title);
 	}
-	
+
 	// ok, this works
 	public function common($term_id, $time_id)
 	{
@@ -91,7 +93,7 @@ class TimesController extends BaseController {
 	{
 		//
 	}
-	
+
 	public function makecalendar($type, $id, $term_id)
 	{
 		$term=Term::findOrFail($term_id);
@@ -128,7 +130,7 @@ class TimesController extends BaseController {
 			break;
 		default: return "oops";
 		};
-		
+
 		if($type=='tests')
 			$cs=Course::whereIn('id', array_unique(Session::get('user.classes')))->get();
 		else
