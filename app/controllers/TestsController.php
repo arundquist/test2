@@ -12,10 +12,11 @@ class TestsController extends \BaseController {
 
 	public function getHeatmap()
 	{
+		$termid=\Session::get('term_id');
 		$times=DB::select("SELECT concat(t.day,': ', t.beginning,'-',t.end) AS ft, COUNT(c.id) as course_count, SUM(c.enrollment) AS totalenrollment
 											FROM times t
 											LEFT JOIN  course_time ct ON t.id = ct.time_id
-											LEFT JOIN courses c ON c.id = ct.course_id
+											LEFT JOIN courses c ON c.id = ct.course_id AND c.term_id=$termid
 											GROUP BY ft
 											ORDER BY course_count DESC");
 	//	dd($times);
