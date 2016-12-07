@@ -6,7 +6,7 @@ class Helper {
     {
         return 'Hello World';
     }
-    
+
     public static function courselist($model, $id)
     {
     	    $mod=$model::findOrFail($id);
@@ -15,18 +15,20 @@ class Helper {
     	    $cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
     	    return $cs;
     }
-    
+
     public static function courselistwithmodel($mod)
     {
     	    $cs=$mod->courses()->where("term_id",'=',\Session::get('term_id'))
-    	    	->where("cancelled",0)->get();
+    	    	->where("cancelled",0)
+            ->orderby("number", "ASC")
+            ->orderby("section","ASC")->get();
     	    $cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
     	    return $cs;
     }
-    
+
     public static function spark($vals)
 	{
-		
+
 		//$vals=[4,5,32,2,0,6,7];
 		$max=max($vals);
 		$h=25;
@@ -45,10 +47,10 @@ class Helper {
 		$ret.= $w.','.$h.'" style="fill:red;stroke:red;stroke-width:1" /></svg>';
 		echo $ret;
     	}
-    	
+
     public static function sparkflex($vals)
 	{
-		
+
 		//$vals=[4,5,32,2,0,6,7];
 		$max=max($vals);
 		if ($max==0)
@@ -70,7 +72,7 @@ class Helper {
 		$ret.= $w.','.$h.'" style="fill:red;stroke:red;stroke-width:1" /></svg>';
 		echo $ret;
     	}
-    	
+
     public static function sparkimg($vals)
 	{
 		// this doesn't seem to be working 1/6/15
@@ -93,60 +95,60 @@ class Helper {
 		//$ret64=base64_encode($ret);
 		echo "<img width='$w' height='$h' src=\"data:image/svg,$ret\" />";
     	}
-    	
+
     public static function evallogin($user,$pass)
 	{
 		$sesid=\Session::GetId();
 		$cookieFile=storage_path() . "/cookies".$sesid.".txt";
-		
+
 		//dd($cookieFile);
-		
+
 		$username=$user;
 		$password=$pass;
 		$url="https://piperline.hamline.edu/pls/prod/twbkwbis.P_ValLogin";
-		
-		
+
+
 		//$username = 'myuser';
 		//$password = 'mypass';
 		$loginUrl = $url;
-		 
+
 		//init curl
 		$ch = curl_init();
-		 
+
 		//Set the URL to work with
 		curl_setopt($ch, CURLOPT_URL, $loginUrl);
-		
+
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-		 
+
+
 		// ENABLE HTTP POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		 
+
 		//Set the post parameters
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'sid='.$username.'&PIN='.$password);
-		 
+
 		//Handle cookies for the login
 		//curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 		//curl_setopt($ch, CURLOPT_COOKIEFILE, storage_path() . "/cookies.txt");
 		// curl_setopt($ch, CURLOPT_COOKIEJAR, storage_path() . "/cookies.txt");
 		curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-		
+
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,false);
-		
-		 
+
+
 		//Setting CURLOPT_RETURNTRANSFER variable to 1 will force cURL
 		//not to print out the results of its query.
 		//Instead, it will return the results as a string return value
 		//from curl_exec() instead of the usual true/false.
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		 
+
 		//execute the request (the login)
 		$store = curl_exec($ch);
 		$store2=curl_exec($ch);
 		//curl_close($ch);
 	}
-	
+
 	public static function evalselects($selects)
 	{
 		$sesid=\Session::GetId();
@@ -176,27 +178,27 @@ class Helper {
 		//$selects=preg_match_all('%(<select.*?</select>)%s', $content, $matches);
 		//dd($matches);
 		return $content;
-		
+
 	}
-	
+
 	public static function extractquestiondetails($string)
 	{
 		//dd($string);
 		$s='%<td CLASS="dddefault">(\d+)</td>\s<td CLASS="dddefault"colspan="4">(.*?)</td>\s<td CLASS="dddefault">\s*?(\d+)</td>%s';
 		$dets=preg_match_all($s, $string, $matches);
 		$qdetails=array();
-		
+
 		foreach ($matches[1] AS $key=>$value)
 		{
 			$qdetails[$key]=['text'=>$matches[2][$key],
 					'value'=>$value,
 					'votes'=>$matches[3][$key]];
 		};
-		
+
 		return $qdetails;
-		
+
 	}
-	
+
 	public static function extractquestioncomments($string)
 	{
 		$comments=array();
@@ -209,7 +211,7 @@ class Helper {
 			};
 		return $comments;
 	}
-	
+
 	public static function extractquestionavg($string)
 	{
 		$avgbool=preg_match('%<B>AVG:\s*?(\d*\.?\d*)</B>%s', $string, $avgmatch);
@@ -220,7 +222,7 @@ class Helper {
 			$avg=0;
 		return $avg;
 	}
-	
+
 	public static function fixtermstring($string)
 	{
 		$sarray=["11"=>"fall",
@@ -233,10 +235,10 @@ class Helper {
 			$year++;
 		return "$year $sarray[$season]";
 	}
-	
+
 	public static function maketimeplot($allsummed)
     	{
-    		$colors=["Monday"=>'black', 
+    		$colors=["Monday"=>'black',
     	    		"Tuesday"=>'red',
     	    		"Wednesday"=>'blue',
     	    		"Thursday"=>'green',
@@ -249,7 +251,7 @@ class Helper {
     	    	if ($absmax==0)
     	    		dd("no one is enrolled (yet?)");
     	    	$mult=275/$absmax;
-  
+
   		foreach ($allsummed AS $daykey=>$day)
   		{
   			$m=max($day);
@@ -274,21 +276,21 @@ class Helper {
   				$name-=12;
   			echo "<text x='$loc' y='300' fill='black'>$name</text>";
   		}
-  		
+
   		for ($y = 0; $y <= 20; $y++) {
   			$loc=275-$y*100*$mult;
   			$name=$y*100;
-  			
+
   			echo "<text x='0' y='$loc' fill='black'>$name</text>";
   		}
   		echo "<text x='0' y='10' fill='black'>$absmax</text>";
-  		
+
   		echo '</svg>';
   	}
-  	
+
   	public static function plotlegend()
   	{
-  		$colors=["Monday"=>'black', 
+  		$colors=["Monday"=>'black',
     	    		"Tuesday"=>'red',
     	    		"Wednesday"=>'blue',
     	    		"Thursday"=>'green',
@@ -298,5 +300,5 @@ class Helper {
     	    		echo "<span style='color:$color'>$day </span>";
     	    	echo "</b>";
     	}
-		
+
 }
