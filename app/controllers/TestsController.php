@@ -1107,6 +1107,7 @@ class TestsController extends \BaseController {
 				$cs=Course::where("term_id",'=',\Session::get('term_id'))
 					->where("cancelled",0)
 					->where("enrollment","<", 10)
+					->orderby("enrollment", "ASC")
 					->orderby("number", "ASC")
 					->orderby("section","ASC")->get();
 				$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
