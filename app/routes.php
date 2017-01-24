@@ -27,6 +27,7 @@ Route::when('rooms/*', 'termwithredirect');
 Route::when('buildings/*', 'termwithredirect');
 Route::when('times/*', 'termwithredirect');
 Route::when('tests/heatmap', 'termwithredirect');
+Route::when('tests/lowenrolled', 'termwithredirect');
 
 
 Route::get('crndetails/{crn}','DataController@crndetails');
@@ -109,6 +110,8 @@ Route::get('courseview/{model}/{id}',  array('as' => 'courseview', function($mod
 		return View::make('courses.index')
 			->with('courses',$cs);
 	}));
+
+//Route::get('lowenrolled', 'TestsController@lowenrolled');
 
 Route::get('testcourseview/{model}/{id}', function($model,$id)
 	{

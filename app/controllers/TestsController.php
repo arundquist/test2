@@ -1103,5 +1103,17 @@ class TestsController extends \BaseController {
 
     	}
 
+			public function getLowenrolled(){
+				$cs=Course::where("term_id",'=',\Session::get('term_id'))
+					->where("cancelled",0)
+					->where("enrollment","<", 11)
+					->orderby("number", "ASC")
+					->orderby("section","ASC")->get();
+				$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
+				return View::make('courses.index')
+					->with('courses',$cs)
+					->with('title',"low enrolled");
+			}
+
 
 }
