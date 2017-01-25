@@ -1111,6 +1111,7 @@ class TestsController extends \BaseController {
 					->orderby('de.shortname')
 					->orderby("number", "ASC")
 					->orderby("section","ASC")
+					->select('courses.*')
 					->get();
 				$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
 				return View::make('courses.index')
