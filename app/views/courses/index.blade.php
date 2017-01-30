@@ -37,9 +37,9 @@
 <td>{{$course->section}}</td>
 <td>
 @if(Request::segment(1)=='tests')
-	{{link_to_action('TestsController@getDeleteclass', $course->title, [$course->id])}} 
+	{{link_to_action('TestsController@getDeleteclass', $course->title, [$course->id])}}
 @else
-	{{link_to_action('TestsController@getAddclass', $course->title, [$course->id])}} 
+	{{link_to_action('TestsController@getAddclass', $course->title, [$course->id])}}
 @endif
 </td>
 <td>{{$course->credits}}</td>
@@ -53,7 +53,7 @@
 </td>
 <td>
 @foreach($course->areas AS $area)
-{{HTML::linkAction('AreasController@show', "{$area->area}", $area->id)}}, 
+{{HTML::linkAction('AreasController@show', "{$area->area}", $area->id)}},
 @endforeach
 </td>
 <td>
@@ -75,15 +75,10 @@
 </td>
 
 <td>
-{{$course->prereqs}}
-</td>
+ <a href='http://physics.hamline.edu:8080/webMathematica/HUwebMMA/prereq.jsp?course={{$course->dept->shortname}} {{$course->number}}'>{{$course->prereqs}}</a></td>
 
 @endforeach
 </tr>
 </table>
 {{link_to_action('TestsController@getModtimeplots', "time plots for this list", [Request::segment(1), Request::segment(2)])}}
 @stop
-
-
-
-
