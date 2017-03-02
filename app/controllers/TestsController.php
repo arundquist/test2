@@ -1116,7 +1116,7 @@ class TestsController extends \BaseController {
 				$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
 				return View::make('courses.index')
 					->with('courses',$cs)
-					->with('title',"low enrolled");
+					->with('title',"low enrolled with $max or less");
 			}
 
 
