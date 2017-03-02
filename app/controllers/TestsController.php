@@ -1103,11 +1103,11 @@ class TestsController extends \BaseController {
 
     	}
 
-			public function getLowenrolled(){
+			public function getLowenrolled($max){
 				$cs=Course::join('depts as de','de.id','=','dept_id')
 					->where("term_id",'=',\Session::get('term_id'))
 					->where("cancelled",0)
-					->where("enrollment","<", 10)
+					->where("enrollment","<=", $max)
 					->orderby('de.shortname')
 					->orderby("number", "ASC")
 					->orderby("section","ASC")
