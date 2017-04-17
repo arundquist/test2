@@ -1119,5 +1119,21 @@ class TestsController extends \BaseController {
 					->with('title',"low enrolled with $max or less");
 			}
 
+			public function getFull(){
+				$cs=Course::join('depts as de','de.id','=','dept_id')
+					->where("term_id",'=',\Session::get('term_id'))
+					->where("cancelled",0)
+					->whereRaw('enrollment=enrollmentmax')
+					->orderby('de.shortname')
+					->orderby("number", "ASC")
+					->orderby("section","ASC")
+					->select('courses.*')
+					->get();
+				$cs->load('instructors', 'hps','rooms.building','dept','times', 'areas','term');
+				return View::make('courses.index')
+					->with('courses',$cs)
+					->with('title',"full courses");
+			}
+
 
 }
