@@ -1,7 +1,7 @@
 <?php
 
 class DataController extends BaseController {
-	
+
 	public function original()
 	{
 		$input=Input::all();
@@ -59,7 +59,7 @@ class DataController extends BaseController {
 		 	 	 $times[$key]="none";
 		 	 	 $rooms[$key]="none";
 		 	 };
-		 }; 
+		 };
 		 foreach ($link AS $thiskey=>$value) {
 		 	 if (!array_key_exists($thiskey,$titles))
 		 	 {
@@ -77,7 +77,7 @@ class DataController extends BaseController {
 		 };
 		 return View::make('originaltable', array("full"=>$full));
 	}
-	
+
 	function fix($url) {
 		$fixed=str_replace("hamschedule","https://piperline.hamline.edu/pls/prod/hamschedule",$url);
 		return $fixed;}
@@ -135,9 +135,9 @@ function finddaytime($row) {
 //$instructor="Rundquist";
 function prof($inst) {
 	global $instructor;
-	
+
 	$tmp=strpos($inst, $instructor);
-	
+
 	if ($instructor == "") {
 		Return TRUE;
 	} ELSE {
@@ -157,7 +157,7 @@ function prof($inst) {
 		return View::make('viewcrns', array("crns"=>$crns,
 			"baselink"=>"https://piperline.hamline.edu/pls/prod/hamschedule.P_OneSingleCourse?term_in=201113&levl_in=UG&key_in=&format_in=L&sort_flag_in=S&supress_others_in=N&crn_in="));
 	}
-	
+
 	public function getcrnsactual($year, $term)
 	{
 		$originalyear=$year;
@@ -166,7 +166,7 @@ function prof($inst) {
 			};
 		$fixedstring=$year.$term;
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
-		
+
 		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
 		$f=preg_match_all("/hamschedule.*crn_in=([0-9]{5})/", $all, $matches);
 		$crns=$matches[1];
@@ -178,9 +178,9 @@ function prof($inst) {
 		};
 		Return "done";
 	}
-	
 
-	
+
+
 	public function getalldata()
 	{
 		$url="http://localhost/singleclass.html";
@@ -209,10 +209,10 @@ function prof($inst) {
 			"building"=>$matches7[1][6],
 			"room"=>$matches7[1][7],
 			"description"=>$matches9[1]);
-		
+
 		return var_dump($allinfo);
 	}
-	
+
 	public function getsingle($crn,$year,$term)
 	{
 		If ($term!=11){
@@ -220,8 +220,8 @@ function prof($inst) {
 			};
 		$fixedstring=$year.$term;
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_OneSingleCourse?term_in=$fixedstring&levl_in=UG&key_in=&format_in=L&sort_flag_in=S&supress_others_in=N&crn_in=$crn";
-		
-			
+
+
 		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
 		$f=preg_match("/(TABLE\s+CLASS=\"datadisplaytable\".*?<\/TABLE>)/sm",$all,$matches);
 		$g=preg_match_all("/<TD.*?>.*?<p.*.?>(.*?)<\/TD>/m",$matches[1],$matches2);
@@ -241,7 +241,7 @@ function prof($inst) {
 		$l=preg_match_all("/<TD.*?><p.*?>(.*?)<\/TD>/sm",$matches6[1],$matches7);
 		$m=preg_match_all("/([A-Z][a-z]{2}?)/",$matches7[1][3],$matches8);
 		$n=preg_match("/Course Description:.*?<TD.*?><p.*?>(.*?)<\/TD>/sm",$all,$matches9);
-		
+
 		$allinfo=array(
 			"enrollmentmax"=>$matches3[2],
 			"enrollmentactual"=>$matches3[1],
@@ -256,18 +256,22 @@ function prof($inst) {
 			"building"=>$matches7[1][6],
 			"room"=>$matches7[1][7],
 			"description"=>$matches9[1]);
-		
+
 		return var_dump($allinfo);
 	}
-	
+
 	public function getsinglefromid($course_id)
 	{
 		$course=Course::findOrFail($course_id);
 		$url=$course->url;
 		$all=file_get_contents($url, FILE_SKIP_EMPTY_LINES);
-		if (!strpos($all, "CANCELED"))
+		if ((!strpos($all, "CANCELED")&&(!strpos($all,"404 Not Found"))))
 		{
 			$f=preg_match("/(table\s+CLASS=\"datadisplaytable\".*?<\/table>)/sm",$all,$matches);
+			if (count($matches)<1)
+			{
+				dd($all);
+			};
 			$g=preg_match_all("/<td.*?><p.*?>(.*?)<\/p><\/td>/m",$matches[1],$matches2);
 			if (count($matches2[1])==6)
 			{
@@ -280,7 +284,7 @@ function prof($inst) {
 				$as=preg_match_all("/([^,]+)/", $matches2[1][$asindex], $areamatches);
 				$areas=array();
 				if($as){$areas=$areamatches[1];};
-				
+
 				// now dump that into the database
 				$areasids=array();
 				foreach ($areas AS $area)
@@ -298,7 +302,7 @@ function prof($inst) {
 				};
 				$course->areas()->sync($areasids);
 			} // closes loop that looks for "Areas of Study"
-			
+
 			$check=preg_match("/([0-9]{1,3}) of ([0-9]{1,3})/", $all, $matches3);
 			$enrollmentmax="";
 			$enrollment="";
@@ -319,14 +323,14 @@ function prof($inst) {
 			$course->save();
 		};
 	}
-	
+
 	public function updatebyid($id)
 	{
 		DB::connection()->disableQueryLog();
 		$this->getsinglefromid($id);
 		Return Redirect::back();
 	}
-	
+
 	public function checkspeed()
 	{
 		$t=time();
@@ -338,7 +342,7 @@ function prof($inst) {
 		$diff=$t2-$t;
 		echo $diff;
 	}
-	
+
 	public function grabenrollments()
 	{
 		DB::connection()->disableQueryLog();
@@ -353,7 +357,7 @@ function prof($inst) {
 		};
 		echo $i;
 	}
-	
+
 	public function getsingleloop($crn,$year,$term)
 	{
 		If ($term!=11){
@@ -361,8 +365,8 @@ function prof($inst) {
 			};
 		$fixedstring=$year.$term;
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_OneSingleCourse?term_in=$fixedstring&levl_in=UG&key_in=&format_in=L&sort_flag_in=S&supress_others_in=N&crn_in=$crn";
-		
-			
+
+
 		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
 		$f=preg_match("/(TABLE\s+CLASS=\"datadisplaytable\".*?<\/TABLE>)/sm",$all,$matches);
 		$g=preg_match_all("/<TD.*?>.*?<p.*.?>(.*?)<\/TD>/m",$matches[1],$matches2);
@@ -375,7 +379,7 @@ function prof($inst) {
 			$hp=$matches10[1];
 			$cnt=6;
 		};
-		
+
 		$check=preg_match("/([0-9]{1,3}) of ([0-9]{1,3})/", $all, $matches3);
 		$i=preg_match("/(Instructor\(s\).*?<\/TR>)/sm",$all,$matches4);
 		$j=preg_match_all("/([A-Za-z]+, [A-Za-z]+)/",$matches4[1],$matches5);
@@ -383,7 +387,7 @@ function prof($inst) {
 		$l=preg_match_all("/<TD.*?><p.*?>(.*?)<\/TD>/sm",$matches6[1],$matches7);
 		$m=preg_match_all("/([A-Z][a-z]{2}?)/",$matches7[1][3],$matches8);
 		$n=preg_match("/Course Description:.*?<TD.*?><p.*?>(.*?)<\/TD>/sm",$all,$matches9);
-		
+
 		$allinfo=array(
 			"enrollmentmax"=>$matches3[2],
 			"enrollmentactual"=>$matches3[1],
@@ -398,10 +402,10 @@ function prof($inst) {
 			"building"=>$matches7[1][6],
 			"room"=>$matches7[1][7],
 			"description"=>$matches9[1]);
-		
+
 		return $allinfo;
 	}
-	
+
 	public function getalldetails($string)
 	{
 		$result=array(
@@ -423,9 +427,9 @@ function prof($inst) {
 		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
 		// if the 5th one is "corequisites:" then you have to add
 		// 2 to all the indices after that
-		
+
 		$add=0;
-		if ($matches2[1][5]=="Corequisites:") 
+		if ($matches2[1][5]=="Corequisites:")
 		{
 			$add=2;
 		};
@@ -437,11 +441,11 @@ function prof($inst) {
 		$result["dept"]=$deptmatch[1];
 		$result["num"]=$deptmatch[2];
 		$result["sec"]=$deptmatch[3];
-		
+
 		// grab HP's
 		$h=preg_match_all("/([A-Z]{1})/", $matches2[1][2],$hpmatch);
 		if ($h){$result["hps"]=$hpmatch[1];};
-		
+
 		//grab instructors
 		// see page 35 for notes on this
 		//$h=preg_match_all("/([A-Za-z]*, [A-Za-z]*)/",$matches2[1][3],$instmatch);
@@ -450,12 +454,12 @@ function prof($inst) {
 		//grab title
 		$h=preg_match("/<B>(.*)</", $matches2[1][5+$add], $titlematch);
 		if($h){$result["title"]=$titlematch[1];};
-		
+
 		// grab credits
 		$h=preg_match("/(.*)\sc/", $matches2[1][6+$add], $creditmatch);
 		if($h){$result["credits"]=$creditmatch[1];};
-		
-		
+
+
 		//grab desc
 		$result["description"]=$matches2[1][7+$add];
 		//grab days
@@ -480,10 +484,10 @@ function prof($inst) {
 		//if($h){$result["days"]=array_slice($daysmatch[1],0,-1);};
 		// get times
 		//$h=preg_match_all("/([0-9]{1,2}:[0-9]{2}[ap]m)/", $matches2[1][8+$add],$timematches);
-		
+
 		return $result;
 	}
-	
+
 	// here I'm going to try to get the multiple times and rooms working
 	// stupid change placeholder
 	// another stupic placeholder
@@ -505,9 +509,9 @@ function prof($inst) {
 		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
 		// if the 5th one is "corequisites:" then you have to add
 		// 2 to all the indices after that
-		
+
 		$add=0;
-		if ($matches2[1][5]=="Corequisites:") 
+		if ($matches2[1][5]=="Corequisites:")
 		{
 			$add=2;
 		};
@@ -519,11 +523,11 @@ function prof($inst) {
 		$result["dept"]=$deptmatch[1];
 		$result["num"]=$deptmatch[2];
 		$result["sec"]=$deptmatch[3];
-		
+
 		// grab HP's
 		$h=preg_match_all("/([A-Z]{1})/", $matches2[1][2],$hpmatch);
 		if ($h){$result["hps"]=$hpmatch[1];};
-		
+
 		//grab instructors
 		// see page 35 for notes on this
 		//$h=preg_match_all("/([A-Za-z]*, [A-Za-z]*)/",$matches2[1][3],$instmatch);
@@ -532,12 +536,12 @@ function prof($inst) {
 		//grab title
 		$h=preg_match("/<B>(.*)</", $matches2[1][5+$add], $titlematch);
 		if($h){$result["title"]=$titlematch[1];};
-		
+
 		// grab credits
 		$h=preg_match("/(.*)\sc/", $matches2[1][6+$add], $creditmatch);
 		if($h){$result["credits"]=$creditmatch[1];};
-		
-		
+
+
 		//grab desc
 		$result["description"]=$matches2[1][7+$add];
 		//grab days
@@ -578,10 +582,10 @@ function prof($inst) {
 		//if($h){$result["days"]=array_slice($daysmatch[1],0,-1);};
 		// get times
 		//$h=preg_match_all("/([0-9]{1,2}:[0-9]{2}[ap]m)/", $matches2[1][8+$add],$timematches);
-		
+
 		return $result;
 	}
-	
+
 	public function testmulttimes()
 	{
 $string=<<<EOD
@@ -604,7 +608,7 @@ $string=<<<EOD
 EOD;
 		dd($this->getalldetailsmulttimes($string));
 	}
-	
+
 	public function getalldetailstest($string)
 	{
 		$result=array(
@@ -628,7 +632,7 @@ EOD;
 		// 2 to all the indices after that
 		return var_dump($matches2[1][1]);
 	}
-	
+
 	public function grabfromlist()
 	{
 		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=201313&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
@@ -638,7 +642,7 @@ EOD;
 		foreach ($matches[1] AS $m)
 		{
 			$biglist[]=$this->getalldetails($m);
-			
+
 		};
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 60);
@@ -647,7 +651,7 @@ EOD;
 			$this->saveone("2014","13", $single);
 		};
 	}
-	
+
 	public function grabterm($year, $season)
 	{
 		$sarray=["fall"=>"11",
@@ -666,10 +670,10 @@ EOD;
 		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
 		foreach ($matches[1] AS $m)
 		{
-			
+
 			//$biglist[]=$this->getalldetails($m);
 			$biglist[]=$this->getalldetailsmulttimes($m);
-			
+
 		};
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 120);
@@ -677,7 +681,7 @@ EOD;
 		{
 			//$this->saveone($year,$season, $single);
 			$this->saveonemulttimes($year,$season, $single);
-		}; 
+		};
 		// check for updated at on today and delete others
 		if ($season!=11){
 			$year=$year-1;
@@ -686,13 +690,13 @@ EOD;
 				-> where('season','=',$season)->first();
 		$term->courses()->where('updated_at', '<', date('Y-m-d'))->delete();
 	}
-	
+
 	// function to take single class data and put in database
-	
+
 	public function saveone($year,$season,$list)
 	{
 		// see page 24 of notebook for the thoughts on this
-		
+
 		// first get the term id
 		$timelist=array();
 		foreach($list['days'] AS $day)
@@ -701,7 +705,7 @@ EOD;
 					'end'=>$list['endtime'],
 					'day'=>$day];
 		};
-		
+
 		If ($season!=11){
 			$year=$year-1;
 			};
@@ -716,7 +720,7 @@ EOD;
 			$term->save();
 		};
 		// now $term->id will be the term id either way
-		
+
 		// first get the dept id
 		$dept=Dept::where('shortname','=',$list['dept'])->first();
 		if ($dept==null)
@@ -727,7 +731,7 @@ EOD;
 			$dept->save();
 		};
 		// now $dept->id will be the term id either way
-		
+
 		// first get the building id
 		$building=Building::where('name','=',$list['building'])->first();
 		if ($building==null)
@@ -738,7 +742,7 @@ EOD;
 			$building->save();
 		};
 		// now $building->id will be the term id either way
-		
+
 		// for "times" we need to do it as a loop, I guess
 		$tids=array();
 		foreach ($timelist AS $tinfo)
@@ -758,8 +762,8 @@ EOD;
 			$tids[]=$time->id;
 		};
 		// now all ids are in $tids
-		
-		// hps are like times 
+
+		// hps are like times
 		// these aren't grabbed yet
 		$hpids=array();
 		foreach ($list['hps'] AS $letter)
@@ -772,9 +776,9 @@ EOD;
 				$hp->save();
 			};
 			$hpids[]=$hp->id;
-		}; 
+		};
 		// now all ids are in $hpids
-		
+
 		// now the room, use the building id from above
 		$room=Room::where('building_id', '=', $building->id)
 		->where('number','=',$list['room'])->first();
@@ -786,7 +790,7 @@ EOD;
 			$room->save();
 		}
 		// now room_id is just $room->id
-		
+
 		// now instructors. be careful because there's a
 		// many-to-many between instructors and departments
 		// I guess we're just doing the name existence here
@@ -805,10 +809,10 @@ EOD;
 			$instructorids[]=$instructor->id;
 		};
 		// now all ids are in $instructorids
-		
-		// now check if crn exists to determine if this is 
+
+		// now check if crn exists to determine if this is
 		// update or create
-		
+
 		$course=Course::where('crn', '=', $list['crn'])
 			->where('term_id',$term->id)->first();
 		if ($course == null)
@@ -833,13 +837,13 @@ EOD;
 		// that should do it!
 		$course->save();
 	}
-	
+
 	// new "saveone" with multiple days
-	
+
 	public function saveonemulttimes($year,$season,$list)
 	{
 		// see page 24 of notebook for the thoughts on this
-		
+
 		// first get the term id
 		/* $timelist=array();
 		foreach($list['days'] AS $day)
@@ -848,7 +852,7 @@ EOD;
 					'end'=>$list['endtime'],
 					'day'=>$day];
 		}; */
-		
+
 		If ($season!=11){
 			$year=$year-1;
 			};
@@ -863,7 +867,7 @@ EOD;
 			$term->save();
 		};
 		// now $term->id will be the term id either way
-		
+
 		// first get the dept id
 		$dept=Dept::where('shortname','=',$list['dept'])->first();
 		if ($dept==null)
@@ -874,7 +878,7 @@ EOD;
 			$dept->save();
 		};
 		// now $dept->id will be the term id either way
-		
+
 		// first get the building id
 		$roomids=array();
 		if (count($list['locations'])>0)
@@ -902,7 +906,7 @@ EOD;
 			};
 		};
 		// now $building->id will be the term id either way
-		
+
 		// for "times" we need to do it as a loop, I guess
 		$tids=array();
 		/* foreach ($timelist AS $tinfo)
@@ -941,8 +945,8 @@ EOD;
 			};
 		};
 		// now all ids are in $tids
-		
-		// hps are like times 
+
+		// hps are like times
 		// these aren't grabbed yet
 		$hpids=array();
 		foreach ($list['hps'] AS $letter)
@@ -955,9 +959,9 @@ EOD;
 				$hp->save();
 			};
 			$hpids[]=$hp->id;
-		}; 
+		};
 		// now all ids are in $hpids
-		
+
 		// now the room, use the building id from above
 		/* $room=Room::where('building_id', '=', $building->id)
 		->where('number','=',$list['room'])->first();
@@ -969,7 +973,7 @@ EOD;
 			$room->save();
 		} */
 		// now room_id is just $room->id
-		
+
 		// now instructors. be careful because there's a
 		// many-to-many between instructors and departments
 		// I guess we're just doing the name existence here
@@ -988,10 +992,10 @@ EOD;
 			$instructorids[]=$instructor->id;
 		};
 		// now all ids are in $instructorids
-		
-		// now check if crn exists to determine if this is 
+
+		// now check if crn exists to determine if this is
 		// update or create
-		
+
 		$course=Course::where('crn', '=', $list['crn'])
 			->where('term_id',$term->id)->first();
 		if ($course == null)
@@ -1017,7 +1021,7 @@ EOD;
 		// that should do it!
 		$course->save();
 	}
-	
+
 	public function crndetails($crn)
 	{
 		$course=Course::with(array('term', 'areas','times'))
@@ -1026,7 +1030,7 @@ EOD;
 		echo var_dump($course);
 		echo "</pre>";
 	}
-	
+
 	public function clearenrollment($term_id)
 	{
 		$success=DB::table('courses')
@@ -1035,7 +1039,7 @@ EOD;
 		 $queries = DB::getQueryLog();
 		 RETURN var_dump($queries);
 	}
-	
+
 	public function deptforcopying($dept_id)
 	{
 		$mod=Dept::findOrFail($dept_id);
@@ -1054,7 +1058,7 @@ EOD;
 		return View::make('courses.showarray')
 			->with('all',$all);
 	}
-	
+
 	public function deptAllforcopying($dept_id)
 	{
 		$mod=Dept::findOrFail($dept_id);
@@ -1077,7 +1081,7 @@ EOD;
 			});
 		foreach($cs AS $course)
 		{
-			
+
 			$hps="";
 			foreach ($course->hps AS $hp)
 			{
