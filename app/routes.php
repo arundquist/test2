@@ -90,6 +90,9 @@ Route::get('Courses/DepartmentCourses/{dept_id}', 'CoursesController@deptcourses
 Route::get('updatebyid/{id}', 'DataController@updatebyid');
 
 Route::get('grabterm/{year}/{season}', 'DataController@grabterm');
+Route::get('bookmarklets', function(){
+	return View::make('tests.bookmarklets');
+});
 
 Route::get('fixwrongterm', function()
 	{
