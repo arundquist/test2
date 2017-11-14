@@ -519,7 +519,13 @@ function prof($inst) {
 		$h=preg_match("/<a.*?>(.*?)</",$matches2[1][0],$crnmatch);
 		$result["crn"]=$crnmatch[1];
 		//grab dept and course and section number
-		$h=preg_match("/([A-Z&]{3,4}) ([0-9L]{4,5})-(.*)/",$matches2[1][1],$deptmatch);
+	//	$h=preg_match("/([A-Z&]{3,4}) ([0-9L]{4,5})-(.*)/",$matches2[1][1],$deptmatch);
+	// Note: this change was made because now orchestra has X, Y, and Z "labs"
+		$h=preg_match("/([A-Z&]{3,4}) ([0-9]{4}[A-Z]*)-(.*)/",$matches2[1][1],$deptmatch);
+		if (!isset($deptmatch[1]))
+		{
+			dd($crnmatch[1]);
+		}
 		$result["dept"]=$deptmatch[1];
 		$result["num"]=$deptmatch[2];
 		$result["sec"]=$deptmatch[3];
