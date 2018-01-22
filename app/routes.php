@@ -94,6 +94,13 @@ Route::get('bookmarklets', function(){
 	return View::make('tests.bookmarklets');
 });
 
+Route::get('testurl', function(){
+	$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=201715&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
+	$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
+	dd($all);
+
+});
+
 Route::get('fixwrongterm', function()
 	{
 		$courses=Course::where('term_id','5')->get();
