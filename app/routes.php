@@ -101,6 +101,10 @@ Route::get('testurl', function(){
 
 });
 
+Route::get('phpinfo', function(){
+	phpinfo();
+});
+
 Route::get('fixwrongterm', function()
 	{
 		$courses=Course::where('term_id','5')->get();
