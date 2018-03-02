@@ -42,6 +42,15 @@ Route::get('testallcrn/{crn}', function($crn)
 			->with('courses',$courses);
 	});
 
+Route::get('fysemdescriptions', function()
+{
+	$dept=Dept::where('shortname', 'FSEM')->first();
+	$courses=Course::where('dept_id',$dept->id)->orderBy('id','DESC')->get();
+	//dd($courses);
+	return View::make('courses.fysem')
+		->with('courses',$courses);
+});
+
 
 Route::get('instructorhistory/{id}', 'InstructorsController@history');
 Route::get('deptcopy/{dept_id}', 'DataController@deptforcopying');
