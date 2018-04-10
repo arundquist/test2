@@ -44,7 +44,7 @@
 </td>
 <td>{{$course->credits}}</td>
 <td>{{HTML::linkRoute('enrollment', "{$course->enrollment} of {$course->enrollmentmax}", array($course->dept->shortname,$course->number))}}</br>
-{{HTML::linkAction('DataController@updatebyid',"{$course->updated_at->diffForHumans()}", $course->id)}}
+<a href='{{secure_url(action('DataController@updatebyid', $course->id))}}'>{{$course->updated_at->diffForHumans()}}</a>{{HTML::linkAction('DataController@updatebyid',"{$course->updated_at->diffForHumans()}", $course->id)}}
 </td>
 <td>
 @foreach($course->hps AS $hp)
