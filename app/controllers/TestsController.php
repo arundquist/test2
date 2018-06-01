@@ -1054,10 +1054,16 @@ class TestsController extends \BaseController {
 		};
 
     	    	$model=ucwords(substr($model,0,-1));
+    	    	if($model == 'Test')
+							{
+								$cs=Course::where("term_id",'=', Session::get('term_id'))
+		    	    		->where("cancelled",0)->get();
+							} else {
+								$mod=$model::findOrFail($id);
+		    	    	$cs=$mod->courses()->where("term_id",'=', Session::get('term_id'))
+		    	    		->where("cancelled",0)->get();
+							}
 
-    	    	$mod=$model::findOrFail($id);
-    	    	$cs=$mod->courses()->where("term_id",'=', Session::get('term_id'))
-    	    		->where("cancelled",0)->get();
     	    	$cs->load('times');
     	    	$all=array();
     	    	foreach ($cs AS $c)
@@ -1095,7 +1101,6 @@ class TestsController extends \BaseController {
     	    		"Friday"=>$allsummed["Friday"]];
     	    	$TR=["Tuesday"=>$allsummed["Tuesday"],
     	    		"Thursday"=>$allsummed["Thursday"]];
-
     	    	Return View::make('times.timecharts',[
 			"MWF"=>$MWF,
 			"TR"=>$TR,
