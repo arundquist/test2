@@ -75,7 +75,7 @@
 </td>
 
 <td>
- <a href='http://physics.hamline.edu:8080/webMathematica/HUwebMMA/prereq.jsp?course={{$course->dept->shortname}} {{$course->number}}'>{{$course->prereqs}}</a></td>
+ <a href='https://webmathematica.hamline.edu/webMathematica/HUwebMMA/prereq.jsp?course={{$course->dept->shortname}} {{$course->number}}'>{{$course->prereqs}}</a></td>
 
 @endforeach
 </tr>
