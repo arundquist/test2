@@ -670,7 +670,7 @@ EOD;
 			$urlyear=$year-1;
 			};
 		$fixedstring=$urlyear.$season;
-		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
+		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&mcamp_in=AA&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
 		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
 		// this will grab each course section
 		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
