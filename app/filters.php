@@ -13,7 +13,10 @@
 
 App::before(function($request)
 {
-	//
+    if( ! Request::secure())
+    {
+        return Redirect::secure(Request::path());
+    }
 });
 
 
@@ -26,7 +29,7 @@ App::after(function($request, $response)
 
 Route::filter('term', function()
 	{
-		if (!(Session::has('term_id'))) 
+		if (!(Session::has('term_id')))
 			return Redirect::action('TermsController@index');
 	});
 

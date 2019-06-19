@@ -531,7 +531,7 @@ function prof($inst) {
 		$result["sec"]=$deptmatch[3];
 
 		// grab HP's
-		$h=preg_match_all("/([A-Z]{1})/", $matches2[1][2],$hpmatch);
+		$h=preg_match_all("/([A-Z0-9]{1,2})/", $matches2[1][2],$hpmatch);
 		if ($h){$result["hps"]=$hpmatch[1];};
 
 		//grab instructors

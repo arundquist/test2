@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
 		<style>
 			@media print {
 			  a[href]:after {
@@ -22,7 +22,7 @@
 	</head>
 
 	<body>
-	
+
 		<div class="container">
 			@if (Session::has('message'))
 				<div class="flash alert">
@@ -59,17 +59,17 @@
            <ul class="nav navbar-nav navbar-right">
            @yield('navcomplete')
           </ul>
-         
+
         </div><!--/.nav-collapse -->
       </div>
-			
+
 			@yield('main')
-			
+
 		</div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 	</body>
 
 </html>
