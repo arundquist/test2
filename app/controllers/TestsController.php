@@ -790,14 +790,16 @@ class TestsController extends \BaseController {
     	{
     		$class=Course::findOrFail($id);
     		Session::push('user.classes', $id);
-    		Return Redirect::back();
+    		//Return Redirect::back();
+				Return Redirect::to('/tests/showmine');
     	}
 
     	public function getDeleteclass($id)
     	{
     		$class=Course::findOrFail($id);
     		Session::put('user.classes', array_diff(Session::get('user.classes'), [$id]));
-    		Return Redirect::back();
+    		//Return Redirect::back();
+				Return Redirect::to('/tests/showmine');
     	}
 
     	public function getClearclasses()
