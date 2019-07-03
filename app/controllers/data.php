@@ -658,6 +658,24 @@ EOD;
 		};
 	}
 
+	public function getbiglist($level, $fixedstring)
+	{
+		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=$level&mcamp_in=AA&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
+		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
+		// this will grab each course section
+		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
+		$biglist=[];
+		foreach ($matches[1] AS $m)
+		{
+
+			//$biglist[]=$this->getalldetails($m);
+			$biglist[]=$this->getalldetailsmulttimes($m);
+
+		};
+
+		return $biglist;
+	}
+
 	public function grabterm($year, $season)
 	{
 		$sarray=["fall"=>"11",
@@ -670,17 +688,14 @@ EOD;
 			$urlyear=$year-1;
 			};
 		$fixedstring=$urlyear.$season;
-		$url="https://piperline.hamline.edu/pls/prod/hamschedule.P_TermLevlPage?term_in=$fixedstring&levl_in=UG&mcamp_in=AA&key_in=&supress_others_in=N&format_in=L&sort_flag_in=S";
-		$all=file_get_contents($url,FILE_SKIP_EMPTY_LINES);
-		// this will grab each course section
-		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
-		foreach ($matches[1] AS $m)
-		{
+		$levels=["UG","MA","CS","DR"];
+		$biglist=[];
+		foreach ($levels as $level) {
+			$bl=$this->getbiglist($level,$fixedstring);
+			$biglist=array_merge($biglist,$bl);
+		}
 
-			//$biglist[]=$this->getalldetails($m);
-			$biglist[]=$this->getalldetailsmulttimes($m);
-
-		};
+		//dd($biglist);
 		//Return View::make('showall',array("biglist"=>$biglist));
 		ini_set('max_execution_time', 120);
 		foreach ($biglist AS $single)
