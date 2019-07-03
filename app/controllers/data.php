@@ -688,7 +688,7 @@ EOD;
 			$urlyear=$year-1;
 			};
 		$fixedstring=$urlyear.$season;
-		$levels=["UG","MA","CS","DR"];
+		$levels=["UG","MS","CS","DR"];
 		$biglist=[];
 		foreach ($levels as $level) {
 			$bl=$this->getbiglist($level,$fixedstring);
