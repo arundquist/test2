@@ -524,7 +524,7 @@ function prof($inst) {
 		$h=preg_match("/([A-Z&]{3,4}) ([0-9]{4}[A-Z]*)-(.*)/",$matches2[1][1],$deptmatch);
 		if (!isset($deptmatch[1]))
 		{
-			dd($crnmatch[1]);
+			dd($string);
 		}
 		$result["dept"]=$deptmatch[1];
 		$result["num"]=$deptmatch[2];
@@ -550,9 +550,13 @@ function prof($inst) {
 
 		//grab desc
 		$result["description"]=$matches2[1][7+$add];
+		//dd(count($matches2[1]));
 		//grab days
 		// here's where I need to make changes
 		// see p. 72 in the old notebook for the thoughts on this
+		if (count($matches2[1])==8+$add) {
+				dd($matches2[1]);
+		}
 		$h=preg_match_all("/Class: [A-Z][a-z]+ [0-9]{1,2}-[A-Z][a-z]+ [0-9]{1,2} ([M,T,W,F][a-z]+day[^\s]*)\s([0-9]{1,2}:[0-9]{2}[a,p]m)-([0-9]{1,2}:[0-9]{2}[a,p]m)\s(.*?)<BR>/",$matches2[1][8+$add], $daytimeroom);
 		if($h)
 		{
@@ -665,6 +669,7 @@ EOD;
 		// this will grab each course section
 		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
 		$biglist=[];
+		dd($matches);
 		foreach ($matches[1] AS $m)
 		{
 

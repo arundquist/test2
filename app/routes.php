@@ -126,6 +126,12 @@ Route::get('fixwrongterm', function()
 		};
 	});
 
+Route::get('json', function()
+{
+	$courses=Course::get();
+	return $courses;
+}
+
 Route::get('courseview/{model}/{id}',  array('as' => 'courseview', function($model,$id)
 	{
 		$mod=$model::findOrFail($id);
