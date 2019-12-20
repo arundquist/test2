@@ -128,7 +128,7 @@ Route::get('fixwrongterm', function()
 
 Route::get('json', function()
 {
-	$courses=Course::get();
+	$courses=Course::where('term_id', '>', 19)->get();
 	return $courses;
 });
 
