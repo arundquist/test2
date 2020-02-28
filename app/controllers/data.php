@@ -669,7 +669,7 @@ EOD;
 		// this will grab each course section
 		$f=preg_match_all("/(<TR><TD><a href.*?<HR WIDTH)/sm",$all,$matches);
 		$biglist=[];
-		dd($matches);
+		//dd($matches);
 		foreach ($matches[1] AS $m)
 		{
 
