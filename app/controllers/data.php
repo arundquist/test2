@@ -506,7 +506,7 @@ function prof($inst) {
 			"days"=>array(),
 			"locations"=>array());
 		// this will grab all the various tds
-		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/",$string,$matches2);
+		$g=preg_match_all("/<TD.*?>(.*?)<\/TD>/s",$string,$matches2);
 		// if the 5th one is "corequisites:" then you have to add
 		// 2 to all the indices after that
 
@@ -540,7 +540,7 @@ function prof($inst) {
 		$h=preg_match_all("/(.*?)<BR>/", $matches2[1][3],$instmatch);
 		if ($h){$result["instructors"]=$instmatch[1];};
 		//grab title
-		$h=preg_match("/<B>(.*)</", $matches2[1][5+$add], $titlematch);
+		$h=preg_match("/<B>(.*?)</s", $matches2[1][5+$add], $titlematch);
 		if($h){$result["title"]=$titlematch[1];};
 
 		// grab credits
@@ -555,7 +555,9 @@ function prof($inst) {
 		// here's where I need to make changes
 		// see p. 72 in the old notebook for the thoughts on this
 		if (count($matches2[1])==8+$add) {
-				dd($matches2[1]);
+				// dd($matches2[1]);
+				dd($string);
+				//dd("yep it's line 559");
 		}
 		$h=preg_match_all("/Class: [A-Z][a-z]+ [0-9]{1,2}-[A-Z][a-z]+ [0-9]{1,2} ([M,T,W,F][a-z]+day[^\s]*)\s([0-9]{1,2}:[0-9]{2}[a,p]m)-([0-9]{1,2}:[0-9]{2}[a,p]m)\s(.*?)<BR>/",$matches2[1][8+$add], $daytimeroom);
 		if($h)
