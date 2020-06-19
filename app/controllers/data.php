@@ -272,7 +272,7 @@ function prof($inst) {
 			{
 				dd($all);
 			};
-			$g=preg_match_all("/<td.*?><p.*?>(.*?)<\/p><\/td>/m",$matches[1],$matches2);
+			$g=preg_match_all("/<td.*?><p.*?>(.*?)<\/p><\/td>/sm",$matches[1],$matches2);
 			if (count($matches2[1])==6)
 			{
 				$asindex=4;
@@ -281,6 +281,7 @@ function prof($inst) {
 			};
 			if (strpos($all, "Area of Study"))
 			{
+				
 				$as=preg_match_all("/([^,]+)/", $matches2[1][$asindex], $areamatches);
 				$areas=array();
 				if($as){$areas=$areamatches[1];};
